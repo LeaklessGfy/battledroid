@@ -1,9 +1,8 @@
 package fr.swing.adapter;
 
 import fr.battledroid.core.Settings;
-import fr.battledroid.core.asset.Asset;
-import fr.battledroid.core.asset.AssetFactory;
-import fr.battledroid.core.asset.ImageAsset;
+import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.adaptee.AssetFactory;
 import fr.battledroid.core.map.Biome;
 import fr.battledroid.core.player.Droid;
 import fr.battledroid.core.player.Player;
@@ -88,7 +87,6 @@ public final class AssetFactoryAdapter implements AssetFactory {
     }
 
     private Asset find(Path path) {
-        ImageAdapter adapter = spriteFactory.get(path);
-        return new ImageAsset(adapter, 0, 0, false);
+        return spriteFactory.get(path);
     }
 }

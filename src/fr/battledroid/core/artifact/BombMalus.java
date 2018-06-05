@@ -1,13 +1,11 @@
 package fr.battledroid.core.artifact;
 
+import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.player.Player;
 
-/**
- * Bomb malus
- */
 public class BombMalus extends AbstractArtifact {
-    public BombMalus() {
-        super(DEFAULT_FIELD);
+    public BombMalus(Asset asset) {
+        super(asset);
     }
 
     @Override

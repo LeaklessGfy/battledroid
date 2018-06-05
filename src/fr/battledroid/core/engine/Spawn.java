@@ -1,9 +1,6 @@
 package fr.battledroid.core.engine;
 
-import fr.battledroid.core.Utils;
-import fr.battledroid.core.asset.Point;
-import fr.battledroid.core.map.Map;
-import fr.battledroid.core.player.Player;
+import fr.battledroid.core.Point;
 
 import java.util.ArrayList;
 
@@ -23,12 +20,10 @@ public final class Spawn {
         }
     }
 
-    public void spawn(Player player) {
+    public Point spawn() {
         if (current >= positions.size()) {
             throw new IllegalStateException("Spawn can not place player anymore");
         }
-        Point point = positions.get(current);
-        player.moveIso(point);
-        current++;
+        return positions.get(current++);
     }
 }

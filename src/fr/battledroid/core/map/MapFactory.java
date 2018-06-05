@@ -1,9 +1,9 @@
 package fr.battledroid.core.map;
 
 import fr.battledroid.core.Settings;
-import fr.battledroid.core.asset.Asset;
-import fr.battledroid.core.asset.AssetFactory;
-import fr.battledroid.core.asset.Point;
+import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.adaptee.AssetFactory;
+import fr.battledroid.core.Tile;
 import fr.battledroid.core.map.noise.NoiseGenerator;
 
 public final class MapFactory {
@@ -12,14 +12,11 @@ public final class MapFactory {
 
         NoiseGenerator backgroundG = new NoiseGenerator(settings.octaves, settings.roughness, settings.scale);
         double[][] bNoises = backgroundG.generate(s, s, settings.seed);
-        Asset[][] backgrounds = new Asset[s][s];
+        Tile[][] backgrounds = new Tile[s][s];
 
         NoiseGenerator overlayG = new NoiseGenerator(settings.octaves * 2, 1,  settings.scale - 0.0001);
         double[][] oNoises = overlayG.generate(s, s, settings.seed);
-        Asset[][] overlays = new Asset[s][s];
-
-        //Random rand = new Random();
-        //rand.setSeed(settings.seed);
+        Tile[][] overlays = new Tile[s][s];
 
         for (int x = 0; x < s; x++) {
             for (int y = 0; y < s; y++) {
@@ -52,9 +49,8 @@ public final class MapFactory {
                     overlay = null;
                 }
 
-                background.moveIso(new Point(x, y));
-                backgrounds[x][y] = background;
-                overlays[x][y] = overlay;
+                backgrounds[x][y] = new Tile(x, y, background);
+                overlays[x][y] = new Tile(x, y, overlay);
             }
         }
 

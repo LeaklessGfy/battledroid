@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.LinkedBlockingDeque;
 
+import fr.battledroid.core.AbstractAsset;
 import fr.battledroid.core.Utils;
-import fr.battledroid.core.asset.*;
+import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.player.item.Inventory;
 import fr.battledroid.core.player.item.Item;
 import fr.battledroid.core.function.BiConsumer;
 import fr.battledroid.core.function.Consumer;
-import fr.battledroid.core.utils.Points;
 
-abstract class AbstractPlayer extends ImageAsset implements Player {
+abstract class AbstractPlayer extends AbstractAsset implements Player {
     final static double DEFAULT_HEALTH = 100;
     final static int DEFAULT_DEFENSE = 0;
     final static int DEFAULT_MAX_DEFENSE = 100;
@@ -26,7 +25,6 @@ abstract class AbstractPlayer extends ImageAsset implements Player {
     private final Item shield;
     private final Inventory inventory;
     private final ArrayList<PlayerObserver> observers;
-    private final LinkedBlockingDeque<Point> moves;
 
     private double health;
     private double maxHealth;
@@ -34,29 +32,21 @@ abstract class AbstractPlayer extends ImageAsset implements Player {
     private int maxDefense;
     private int speed;
     private int maxSpeed;
-    private int field;
-
     private State state;
-    private Point dst;
-    private float xDir;
-    private float yDir;
-    private int iteration;
 
     AbstractPlayer(Builder builder) {
-        super(builder.img, builder.x, builder.y, true);
+        super(builder.img);
         this.uuid = UUID.randomUUID().toString();
         this.weapon = builder.weapon;
         this.shield = builder.shield;
         this.inventory = builder.inventory;
         this.observers = builder.observers;
-        this.moves = new LinkedBlockingDeque<>();
         this.health = builder.health;
         this.maxHealth = builder.maxHealth;
         this.defense = builder.defense;
         this.maxDefense = builder.maxDefense;
         this.speed = builder.speed;
         this.maxSpeed = builder.maxSpeed;
-        this.field = builder.field;
         this.state = State.WAITING;
     }
 
@@ -210,55 +200,6 @@ abstract class AbstractPlayer extends ImageAsset implements Player {
     }
 
     @Override
-    public void postMove(int x, int y) {
-        synchronized (inventory) {
-            moves.offer(new Point(x, y));
-        }
-    }
-
-    @Override
-    public void drawMiniMap(Canvas canvas, float cellWidth, float cellHeight) {
-        /*
-        float xOffset = (icon.x() * cellWidth) + 5;
-        float yOffset = (icon.y() * cellHeight) + 5;
-        float radius = canvas.getWidth() / 30;
-        canvas.drawCircle(xOffset + cellWidth / 2, yOffset + cellHeight / 2, radius, null);
-        */
-    }
-
-    @Override
-    public boolean shouldDraw(PointF offset, int canvasWidth, int canvasHeight) {
-        /*
-        double x = icon.x() + offset.x;
-        double y = icon.y() + offset.y;
-        int w = icon.width() / 2;
-        int h = icon.height() / 2;
-
-        return x >= -w && x <= canvasWidth - w && y >= -h && y <= canvasHeight - (h / 4);
-        */
-        return true;
-    }
-
-    @Override
-    public void tick() {
-        synchronized (inventory) {
-            switch (state) {
-                case WAITING:
-                    tickWaiting();
-                    break;
-                case MOVING:
-                    tickMoving();
-                    break;
-            }
-        }
-    }
-
-    @Override
-    public boolean hasCollide(Point src, Point dst) {
-        return Points.dist(src, dst) <= field;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -276,44 +217,10 @@ abstract class AbstractPlayer extends ImageAsset implements Player {
         return uuid;
     }
 
-    private void tickWaiting() {
-        nextMove();
-    }
-
-    private void tickMoving() {
-        if (iteration >= speed) {
-            state = State.WAITING;
-            moveIso(dst);
-            nextMove();
-            return;
-        }
-        System.out.println("MOVING");
-        float x = screen().x + (xDir / speed);
-        float y = screen().y + (yDir / speed);
-        moveScreen(new PointF(x, y));
-        iteration++;
-    }
-
-    private void nextMove() {
-        dst = moves.poll();
-        if (dst == null) {
-            return;
-        }
-        PointF screen = Points.isoToScreen(dst, img);
-        System.out.println("NEXT");
-        System.out.println(dst);
-        System.out.println(screen);
-
-        state = State.MOVING;
-        iteration = 0;
-        xDir = screen.x - screen().x;
-        yDir = screen.y - screen().y;
-    }
-
     static class Builder {
         private int x;
         private int y;
-        private Image img;
+        private Asset img;
 
         private Item weapon;
         private Item shield;
@@ -328,7 +235,7 @@ abstract class AbstractPlayer extends ImageAsset implements Player {
         private int maxSpeed;
         private int field;
 
-        Builder(Image img, Item weapon, Item shield) {
+        Builder(Asset img, Item weapon, Item shield) {
             this.img = Utils.requireNonNull(img);
             this.weapon = Utils.requireNonNull(weapon);
             this.shield = Utils.requireNonNull(shield);
@@ -343,7 +250,7 @@ abstract class AbstractPlayer extends ImageAsset implements Player {
             this.field = DEFAULT_FIELD;
         }
 
-        public Builder setImage(Image img) {
+        public Builder setImage(Asset img) {
             this.img = Utils.requireNonNull(img);
             return this;
         }

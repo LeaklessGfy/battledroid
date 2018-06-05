@@ -1,6 +1,6 @@
 package fr.swing.adapter;
 
-import fr.battledroid.core.asset.Color;
+import fr.battledroid.core.adaptee.Color;
 
 import java.util.Objects;
 

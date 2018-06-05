@@ -18,9 +18,9 @@ public final class SpriteFactory {
         this.lazy = new WeakHashMap<>();
     }
 
-    public ImageAdapter get(Path path) {
+    public AssetAdapter get(Path path) {
         Image img = lazyLoad(path);
-        return new ImageAdapter(img, settings);
+        return new AssetAdapter(img, settings);
     }
 
     private Image lazyLoad(Path path) {

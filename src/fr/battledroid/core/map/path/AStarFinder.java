@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import fr.battledroid.core.asset.Point;
+import fr.battledroid.core.Point;
 import fr.battledroid.core.map.Map;
 
 public final class AStarFinder implements PathFinder {

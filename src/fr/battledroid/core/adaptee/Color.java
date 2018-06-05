@@ -1,4 +1,4 @@
-package fr.battledroid.core.asset;
+package fr.battledroid.core.adaptee;
 
 public interface Color {
     int getRGB();

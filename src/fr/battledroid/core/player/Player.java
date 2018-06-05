@@ -1,11 +1,10 @@
 package fr.battledroid.core.player;
 
+import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.player.item.Inventory;
 import fr.battledroid.core.player.item.Item;
-import fr.battledroid.core.asset.Collider;
-import fr.battledroid.core.asset.Asset;
 
-public interface Player extends Asset, Collider {
+public interface Player extends Asset {
     double health();
     int defense();
     Item weapon();
@@ -28,6 +27,5 @@ public interface Player extends Asset, Collider {
     void onEncounter(Player player);
     void onFightLeave();
 
-    void postMove(int x, int y);
     void attach(PlayerObserver observer);
 }

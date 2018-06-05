@@ -1,6 +1,6 @@
 package fr.battledroid.core.engine;
 
-import fr.battledroid.core.asset.Color;
+import fr.battledroid.core.adaptee.Color;
 import fr.battledroid.core.map.Map;
 
 public final class EngineFactory {

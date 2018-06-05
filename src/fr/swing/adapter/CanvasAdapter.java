@@ -1,7 +1,8 @@
 package fr.swing.adapter;
 
-import fr.battledroid.core.asset.Canvas;
-import fr.battledroid.core.asset.Color;
+import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.adaptee.Canvas;
+import fr.battledroid.core.adaptee.Color;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,11 +32,6 @@ public final class CanvasAdapter implements Canvas {
     }
 
     @Override
-    public void drawImage(Object img, float x, float y) {
-        g.drawImage((Image) img, (int) x, (int) y, null);
-    }
-
-    @Override
     public void drawRect(float x, float y, float width, float height, Color color) {
         g.drawRect((int) x, (int) y, (int) width, (int) height);
     }
@@ -48,5 +44,10 @@ public final class CanvasAdapter implements Canvas {
     public void drawColor(Color color) {
         g.setColor((java.awt.Color) color.get());
         g.fillRect(0, 0, component.getWidth(), component.getHeight());
+    }
+
+    @Override
+    public void drawAsset(Asset asset, float x, float y) {
+        g.drawImage((Image) asset.get(), (int) x, (int) y, null);
     }
 }

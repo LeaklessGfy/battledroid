@@ -1,6 +1,5 @@
 package fr.battledroid.core.player;
 
-import fr.battledroid.core.asset.Asset;
 import fr.battledroid.core.player.item.Item;
 
 public class Monster extends AbstractPlayer {

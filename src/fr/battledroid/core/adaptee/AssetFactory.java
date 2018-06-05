@@ -1,4 +1,4 @@
-package fr.battledroid.core.asset;
+package fr.battledroid.core.adaptee;
 
 import fr.battledroid.core.map.Biome;
 import fr.battledroid.core.player.Player;

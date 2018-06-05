@@ -1,4 +1,4 @@
-package fr.battledroid.core.asset;
+package fr.battledroid.core;
 
 public class PointF {
     public float x;

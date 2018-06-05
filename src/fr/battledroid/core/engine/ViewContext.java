@@ -1,15 +1,12 @@
 package fr.battledroid.core.engine;
 
+import fr.battledroid.core.Position;
 import fr.battledroid.core.Utils;
-import fr.battledroid.core.asset.Canvas;
-import fr.battledroid.core.asset.PointF;
+import fr.battledroid.core.adaptee.Canvas;
+import fr.battledroid.core.PointF;
 import fr.battledroid.core.player.Player;
 
-import java.util.logging.Logger;
-
 public final class ViewContext {
-    private static Logger logger = Logger.getLogger(ViewContext.class.getName());
-
     private final Engine engine;
     private final Player player;
     private final PointF offset = new PointF(0, 0);
@@ -27,17 +24,16 @@ public final class ViewContext {
         offset.y -= dY;
     }
 
-    public void move(int x, int y) {
-        player.postMove(x, y);
+    public void move(double x, double y) {
+        Position dst = engine.findPosition(x, y);
+        engine.move(player, dst);
     }
 
-    public void right() {
-        logger.info("Post move on : " + (player.iso().x + 1) + ", " + (player.iso().x));
-        player.postMove(player.iso().x + 1, player.iso().y);
+    public void move(Direction direction) {
+        engine.move(player, Direction.toPoint(direction));
     }
 
     public void draw(Canvas canvas) {
-        engine.draw(canvas, offset);
-        player.draw(canvas, offset);
+        engine.drawMap(canvas, offset);
     }
 }

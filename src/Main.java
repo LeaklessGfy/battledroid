@@ -21,10 +21,14 @@ public class Main {
         Settings settings = new Settings();
         SpriteFactory spriteFactory = new SpriteFactory(settings);
         AssetFactoryAdapter assetFactory = AssetFactoryAdapter.create(spriteFactory, settings);
+
         Map map = MapFactory.createRandom(assetFactory, settings);
-        Engine engine = EngineFactory.create(map, new ColorAdapter(Color.BLACK));
         Player player = PlayerFactory.createDroid(spriteFactory);
+
+        Engine engine = EngineFactory.create(map, new ColorAdapter(Color.BLACK));
         ViewContext context = new ViewContext(engine, player);
+
+        engine.addPlayer(player);
 
         View view = new View(context);
         Window w = new Window(1000, 700);
@@ -34,7 +38,7 @@ public class Main {
         Thread fps = new Thread(() -> {
             while (!Thread.interrupted()) {
                 try {
-                    player.tick();
+                    engine.tick();
                     view.repaint();
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
