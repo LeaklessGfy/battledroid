@@ -11,13 +11,13 @@ import java.util.Objects;
 
 public final class View extends JPanel {
     private final ViewContext context;
-    private final CanvasAdapter adapter;
+    //private final CanvasAdapter adapter;
 
     private Point pt = new Point();
 
     public View(ViewContext context) {
         this.context = Objects.requireNonNull(context);
-        this.adapter = new CanvasAdapter(this);
+        //this.adapter = new CanvasAdapter(this);
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -72,12 +72,7 @@ public final class View extends JPanel {
     }
 
     @Override
-    public void update(Graphics g) {
-        context.draw(adapter.init(g));
-    }
-
-    @Override
     public void paintComponent(Graphics g) {
-        context.draw(adapter.init(g));
+        //context.draw(adapter.wrap(g));
     }
 }

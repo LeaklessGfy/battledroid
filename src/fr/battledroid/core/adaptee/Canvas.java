@@ -1,8 +1,11 @@
 package fr.battledroid.core.adaptee;
 
+import fr.battledroid.core.utils.Point;
+
 public interface Canvas {
     int getWidth();
     int getHeight();
+    Point getSize();
 
     <T> T get();
 

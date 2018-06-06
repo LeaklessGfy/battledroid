@@ -14,7 +14,7 @@ public final class Laser implements Particle {
     private final PointF dir;
 
     private int i = 0;
-    private int speed = 30;
+    private int speed = 20;
 
     public Laser(Point iso, PointF screen, Point offset) {
         this.iso = iso;

@@ -2,32 +2,31 @@ package fr.swing.adapter;
 
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.Color;
+import fr.battledroid.core.utils.Point;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.Objects;
 
 public final class CanvasAdapter implements Canvas {
-    private final JComponent component;
-    private Graphics g;
+    private Graphics2D g;
 
-    public CanvasAdapter(JComponent component) {
-        this.component = Objects.requireNonNull(component);
-    }
-
-    public CanvasAdapter init(Graphics g) {
-        this.g = g;
-        return this;
+    public CanvasAdapter(Graphics2D g) {
+        this.g = Objects.requireNonNull(g);
     }
 
     @Override
     public int getWidth() {
-        return component.getWidth();
+        return g.getDeviceConfiguration().getBounds().width;
     }
 
     @Override
     public int getHeight() {
-        return component.getHeight();
+        return g.getDeviceConfiguration().getBounds().height;
+    }
+
+    @Override
+    public Point getSize() {
+        return new Point(getWidth(), getHeight());
     }
 
     @Override

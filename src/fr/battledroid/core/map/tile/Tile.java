@@ -25,7 +25,6 @@ public final class Tile implements Drawable {
         if (asset == null) {
             return false;
         }
-
         double x = screen.x + offset.x;
         double y = screen.y + offset.y;
 
@@ -34,7 +33,7 @@ public final class Tile implements Drawable {
 
     @Override
     public void drawMap(Canvas canvas, PointF offset) {
-        if (asset == null) {
+        if (asset == null || !shouldDraw(offset, canvas.getSize())) {
             return;
         }
         asset.draw(canvas, screen.x + offset.x, screen.y + offset.y);
@@ -65,7 +64,7 @@ public final class Tile implements Drawable {
         return new PointF(screen);
     }
 
-    public void translate(PointF screen, Context ctx, Asset asset) {
+    private void translate(PointF screen, Context ctx, Asset asset) {
         synchronized (iso) {
             this.screen.set(screen);
             this.ctx = ctx;

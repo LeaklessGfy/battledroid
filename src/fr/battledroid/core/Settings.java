@@ -11,7 +11,7 @@ public final class Settings {
     private static final int DEFAULT_TILE_HEIGHT = 438; //876
     private static final int DEFAULT_TILE_ALPHA_WIDTH = 0;
     private static final int DEFAULT_TILE_ALPHA_HEIGHT = 142; //284
-    private static final int DEFAULT_MAP_SIZE = 4;
+    private static final int DEFAULT_MAP_SIZE = 50;
 
     /* SCREEN */
     private static final int DEFAULT_SCREEN_WIDTH = 1000;
