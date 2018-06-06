@@ -194,7 +194,6 @@ abstract class AbstractPlayer implements Player {
 
     @Override
     public void move(Tile tile) {
-        System.out.println("OFFER " + tile);
         moves.offer(tile);
         last = tile;
     }
@@ -285,10 +284,9 @@ abstract class AbstractPlayer implements Player {
         if (dst == null) {
             return;
         }
-        PointF screen = current.screen();
-        PointF nScreen = Points.isoToScreen(dst.iso());
         state = State.MOVING;
-        Context ctx = new Context(dst, new PointF(nScreen.x - screen.x, nScreen.y - screen.y), 10, onChange, onArrive);
+        PointF dir = Points.movement(current.iso(), dst.iso());
+        Context ctx = new Context(dst, dir, speed, onChange, onArrive);
         current.move(ctx);
     }
 

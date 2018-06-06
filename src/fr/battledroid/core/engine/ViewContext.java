@@ -1,6 +1,8 @@
 package fr.battledroid.core.engine;
 
+import fr.battledroid.core.Direction;
 import fr.battledroid.core.map.tile.Tile;
+import fr.battledroid.core.utils.Points;
 import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.utils.PointF;
@@ -14,6 +16,7 @@ public final class ViewContext {
     public ViewContext(Engine engine, Player player) {
         this.engine = Utils.requireNonNull(engine);
         this.player = Utils.requireNonNull(player);
+        this.offset.set(Points.center(player.current()));
     }
 
     public void offset(double dX, double dY) {
@@ -31,6 +34,10 @@ public final class ViewContext {
 
     public void move(Direction direction) {
         engine.move(player, Direction.toPoint(direction));
+    }
+
+    public void shoot(Direction direction) {
+        engine.shoot(player, Direction.toPoint(direction));
     }
 
     public void draw(Canvas canvas) {

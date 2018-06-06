@@ -13,6 +13,10 @@ public final class Settings {
     private static final int DEFAULT_TILE_ALPHA_HEIGHT = 142; //284
     private static final int DEFAULT_MAP_SIZE = 4;
 
+    /* SCREEN */
+    private static final int DEFAULT_SCREEN_WIDTH = 1000;
+    private static final int DEFAULT_SCREEN_HEIGHT = 700;
+
     /* FOLDER */
     private static final String DEFAULT_RESOURCES = "resources";
     private static final String DEFAULT_THEME = "pixel";
@@ -35,6 +39,9 @@ public final class Settings {
     public final int tileAlphaHeight;
     public final int mapSize;
 
+    public final int screenWidth;
+    public final int screenHeight;
+
     public final String resources;
     public final String theme;
 
@@ -54,6 +61,9 @@ public final class Settings {
         this.tileAlphaWidth = Utils.requireMinMax(b.tileAlphaWidth, -1, tileWidth);
         this.tileAlphaHeight = Utils.requireMinMax(b.tileAlphaHeight, -1, tileHeight);
         this.mapSize = Utils.requireMin(b.mapSize, 4);
+
+        this.screenWidth = b.screenWidth;
+        this.screenHeight = b.screenHeight;
 
         this.resources = Utils.requireNonNull(b.resources);
         this.theme = Utils.requireNonNull(b.theme);
@@ -87,6 +97,9 @@ public final class Settings {
         private int tileAlphaHeight;
         private int mapSize;
 
+        private int screenWidth;
+        private int screenHeight;
+
         private String resources;
         private String theme;
 
@@ -106,6 +119,9 @@ public final class Settings {
             tileAlphaWidth = DEFAULT_TILE_ALPHA_WIDTH;
             tileAlphaHeight = DEFAULT_TILE_ALPHA_HEIGHT;
             mapSize = DEFAULT_MAP_SIZE;
+
+            screenWidth = DEFAULT_SCREEN_WIDTH;
+            screenHeight = DEFAULT_SCREEN_HEIGHT;
 
             resources = DEFAULT_RESOURCES;
             theme = DEFAULT_THEME;

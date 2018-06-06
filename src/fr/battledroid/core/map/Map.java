@@ -2,6 +2,7 @@ package fr.battledroid.core.map;
 
 import fr.battledroid.core.Drawable;
 import fr.battledroid.core.map.tile.Tile;
+import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.utils.Point;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface Map extends Drawable {
     Tile overlay(Point point);
     Tile screenToTile(double x, double y);
     //TileHolder<Artifact> randomArtifacts(int nb, ArtifactFactory factory);
+
+    void addParticle(Particle particle);
 }

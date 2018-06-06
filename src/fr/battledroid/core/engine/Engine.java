@@ -25,6 +25,8 @@ public interface Engine {
     void move(Player player, Tile tile);
     Tile find(double x, double y);
 
+    void shoot(Player player, Point point);
+
     void setListener(Listener listener);
     void setBehaviour(AIMoveBehaviour behaviour);
 }

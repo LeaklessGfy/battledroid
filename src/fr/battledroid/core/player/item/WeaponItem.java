@@ -2,7 +2,7 @@ package fr.battledroid.core.player.item;
 
 import fr.battledroid.core.player.Player;
 
-public class WeaponItem implements Item {
+public final class WeaponItem implements Item {
     private int damage = 10;
 
     @Override

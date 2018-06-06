@@ -1,6 +1,6 @@
 package fr.swing.ui;
 
-import fr.battledroid.core.engine.Direction;
+import fr.battledroid.core.Direction;
 import fr.swing.adapter.CanvasAdapter;
 import fr.battledroid.core.engine.ViewContext;
 
@@ -40,17 +40,29 @@ public final class View extends JPanel {
             public void keyPressed(KeyEvent e) {
                 int key = e.getKeyCode();
                 switch (key) {
-                    case KeyEvent.VK_LEFT:
+                    case KeyEvent.VK_Q:
                         context.move(Direction.LEFT);
                         break;
-                    case KeyEvent.VK_RIGHT:
+                    case KeyEvent.VK_D:
                         context.move(Direction.RIGHT);
                         break;
-                    case KeyEvent.VK_UP:
+                    case KeyEvent.VK_Z:
                         context.move(Direction.UP);
                         break;
-                    case KeyEvent.VK_DOWN:
+                    case KeyEvent.VK_S:
                         context.move(Direction.DOWN);
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        context.shoot(Direction.LEFT);
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        context.shoot(Direction.RIGHT);
+                        break;
+                    case KeyEvent.VK_UP:
+                        context.shoot(Direction.UP);
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        context.shoot(Direction.DOWN);
                         break;
                 }
                 repaint();
@@ -65,7 +77,7 @@ public final class View extends JPanel {
     }
 
     @Override
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
         context.draw(adapter.init(g));
     }
 }

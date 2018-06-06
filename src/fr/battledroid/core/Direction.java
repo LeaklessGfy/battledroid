@@ -1,4 +1,4 @@
-package fr.battledroid.core.engine;
+package fr.battledroid.core;
 
 import fr.battledroid.core.utils.Point;
 

@@ -85,9 +85,7 @@ public final class Tile implements Drawable {
                 ctx.onArrive.accept(this);
                 ctx = null;
             } else {
-                float x = screen.x + (ctx.dir.x / ctx.max);
-                float y = screen.y + (ctx.dir.y / ctx.max);
-                screen.set(x, y);
+                screen.set(Points.step(screen, ctx.dir, ctx.max));
                 ctx.i++;
             }
         }

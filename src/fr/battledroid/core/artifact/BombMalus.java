@@ -3,7 +3,7 @@ package fr.battledroid.core.artifact;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.player.Player;
 
-public class BombMalus extends AbstractArtifact {
+public final class BombMalus extends AbstractArtifact {
     public BombMalus(Asset asset) {
         super(asset);
     }

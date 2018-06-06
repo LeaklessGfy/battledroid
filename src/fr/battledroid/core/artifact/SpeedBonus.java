@@ -3,7 +3,7 @@ package fr.battledroid.core.artifact;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.player.Player;
 
-public class SpeedBonus extends AbstractArtifact {
+public final class SpeedBonus extends AbstractArtifact {
     public SpeedBonus(Asset asset) {
         super(asset);
     }

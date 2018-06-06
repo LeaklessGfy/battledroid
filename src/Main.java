@@ -24,9 +24,9 @@ public class Main {
         Player player = PlayerFactory.createDroid(assetFactory);
 
         Engine engine = EngineFactory.create(map, new ColorAdapter(Color.BLACK));
-        ViewContext context = new ViewContext(engine, player);
-
         engine.addPlayer(player);
+
+        ViewContext context = new ViewContext(engine, player);
 
         View view = new View(context);
         Window w = new Window(1000, 700);

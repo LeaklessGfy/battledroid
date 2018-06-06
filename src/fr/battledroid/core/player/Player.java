@@ -1,7 +1,6 @@
 package fr.battledroid.core.player;
 
 import fr.battledroid.core.adaptee.Asset;
-import fr.battledroid.core.engine.Direction;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.player.item.Inventory;
 import fr.battledroid.core.player.item.Item;

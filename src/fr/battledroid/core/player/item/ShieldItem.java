@@ -2,7 +2,7 @@ package fr.battledroid.core.player.item;
 
 import fr.battledroid.core.player.Player;
 
-public class ShieldItem implements Item {
+public final class ShieldItem implements Item {
     private int defense = 10;
 
     @Override

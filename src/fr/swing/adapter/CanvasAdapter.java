@@ -42,5 +42,8 @@ public final class CanvasAdapter implements Canvas {
 
     @Override
     public void drawCircle(float x, float y, float radius, Color color) {
+        g.drawOval((int) x, (int) y, (int) radius, (int) radius);
+        g.setColor(java.awt.Color.RED);
+        g.fillOval((int) x, (int) y, (int) radius, (int) radius);
     }
 }

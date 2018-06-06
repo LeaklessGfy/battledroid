@@ -5,17 +5,21 @@ import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.map.path.AStarFinder;
 import fr.battledroid.core.map.path.PathFinder;
 import fr.battledroid.core.map.tile.Tile;
+import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.utils.Points;
 import fr.battledroid.core.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 final class MapImpl implements Map {
     private final Tile[][] backgrounds;
     private final Tile[][] overlays;
+    private final ArrayList<Particle> particles;
     private final Settings settings;
     private final PathFinder pathFinder;
 
@@ -23,6 +27,7 @@ final class MapImpl implements Map {
         this.backgrounds = Utils.requireNonNull(backgrounds);
         this.overlays = Utils.requireNonNull(overlays);
         this.settings = Utils.requireNonNull(settings);
+        this.particles = new ArrayList<>();
         this.pathFinder = new AStarFinder(this, settings.mapSize / 2, true);
     }
 
@@ -72,6 +77,9 @@ final class MapImpl implements Map {
                 }
             }
         }
+        for (Particle particle : particles) {
+            particle.drawMap(canvas, offset);
+        }
     }
 
     @Override
@@ -90,6 +98,14 @@ final class MapImpl implements Map {
                 if (overlays[x][y] != null) {
                     overlays[x][y].tick();
                 }
+            }
+        }
+        Iterator<Particle> it = particles.iterator();
+        while (it.hasNext()) {
+            Particle particle = it.next();
+            particle.tick();
+            if (particle.hasEnd()) {
+                it.remove();
             }
         }
     }
@@ -139,5 +155,10 @@ final class MapImpl implements Map {
     public Tile screenToTile(double x, double y) {
         Point point = Points.screenToIso(x, y);
         return backgrounds[point.x][point.y];
+    }
+
+    @Override
+    public void addParticle(Particle particle) {
+        particles.add(particle);
     }
 }

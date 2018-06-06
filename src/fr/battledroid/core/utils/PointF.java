@@ -1,6 +1,6 @@
 package fr.battledroid.core.utils;
 
-public class PointF {
+public final class PointF {
     public float x;
     public float y;
 
@@ -38,6 +38,10 @@ public class PointF {
         this.x += p.x;
         this.y += p.y;
         return this;
+    }
+
+    public PointF clone() {
+        return new PointF(this);
     }
 
     @Override

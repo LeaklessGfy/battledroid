@@ -1,6 +1,7 @@
 package fr.battledroid.core.engine;
 
 import fr.battledroid.core.map.tile.Tile;
+import fr.battledroid.core.particle.Laser;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.adaptee.Canvas;
@@ -57,8 +58,8 @@ final class EngineImpl implements Engine {
 
     @Override
     public void move(Player player, Point point) {
-        Tile src = player.last();
-        Point p = src.iso().offset(point);
+        Point src = player.last().iso().clone();
+        Point p = src.offset(point);
         if (!map.valid(p)) {
             return;
         }
@@ -82,6 +83,13 @@ final class EngineImpl implements Engine {
     @Override
     public Tile find(double x, double y) {
         return map.screenToTile(x, y);
+    }
+
+    @Override
+    public void shoot(Player player, Point point) {
+        Point src = player.current().iso().clone();
+        PointF screen = player.current().screen().clone();
+        map.addParticle(new Laser(src, screen, point));
     }
 
     @Override
