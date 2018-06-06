@@ -1,7 +1,9 @@
 package fr.swing.adapter;
 
+import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.Color;
 
+import java.awt.*;
 import java.util.Objects;
 
 public final class ColorAdapter implements Color {
@@ -12,12 +14,9 @@ public final class ColorAdapter implements Color {
     }
 
     @Override
-    public int getRGB() {
-        return color.getRGB();
-    }
-
-    @Override
-    public Object get() {
-        return color;
+    public void draw(Canvas canvas) {
+        Graphics g = canvas.get();
+        g.setColor(color);
+        g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 }

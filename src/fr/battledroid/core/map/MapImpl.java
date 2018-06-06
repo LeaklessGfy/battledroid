@@ -4,7 +4,10 @@ import fr.battledroid.core.*;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.map.path.AStarFinder;
 import fr.battledroid.core.map.path.PathFinder;
+import fr.battledroid.core.utils.Point;
+import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.utils.Points;
+import fr.battledroid.core.utils.Utils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -133,7 +136,7 @@ final class MapImpl implements Map {
 
     @Override
     public Position screenToTile(double x, double y) {
-        Point point = Points.screenToIso(x, y, settings);
+        Point point = Points.screenToIso(x, y);
         return backgrounds[point.x][point.y];
     }
 }

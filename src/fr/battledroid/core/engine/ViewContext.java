@@ -1,9 +1,9 @@
 package fr.battledroid.core.engine;
 
 import fr.battledroid.core.Position;
-import fr.battledroid.core.Utils;
+import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.adaptee.Canvas;
-import fr.battledroid.core.PointF;
+import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.player.Player;
 
 public final class ViewContext {

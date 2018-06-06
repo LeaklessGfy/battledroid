@@ -1,4 +1,4 @@
-package fr.battledroid.core;
+package fr.battledroid.core.utils;
 
 public class Point {
     public int x;
@@ -11,8 +11,14 @@ public class Point {
         this.y = y;
     }
 
-    public Point transform(Point point) {
-        return new Point(x + point.x, y + point.y);
+    public Point(Point point) {
+        this.x = point.x;
+        this.y = point.y;
+    }
+
+    public void offset(Point point) {
+        this.x += point.x;
+        this.y += point.y;
     }
 
     @Override

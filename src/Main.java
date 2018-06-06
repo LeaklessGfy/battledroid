@@ -2,7 +2,6 @@ import fr.battledroid.core.player.Player;
 import fr.battledroid.core.player.PlayerFactory;
 import fr.swing.adapter.AssetFactoryAdapter;
 import fr.swing.adapter.ColorAdapter;
-import fr.battledroid.core.Settings;
 import fr.battledroid.core.engine.Engine;
 import fr.battledroid.core.engine.EngineFactory;
 import fr.battledroid.core.engine.ViewContext;
@@ -18,11 +17,10 @@ import java.awt.event.WindowEvent;
 
 public class Main {
     public static void main(String[] args) {
-        Settings settings = new Settings();
-        SpriteFactory spriteFactory = new SpriteFactory(settings);
-        AssetFactoryAdapter assetFactory = AssetFactoryAdapter.create(spriteFactory, settings);
+        SpriteFactory spriteFactory = new SpriteFactory();
+        AssetFactoryAdapter assetFactory = AssetFactoryAdapter.create(spriteFactory);
 
-        Map map = MapFactory.createRandom(assetFactory, settings);
+        Map map = MapFactory.createRandom(assetFactory);
         Player player = PlayerFactory.createDroid(spriteFactory);
 
         Engine engine = EngineFactory.create(map, new ColorAdapter(Color.BLACK));

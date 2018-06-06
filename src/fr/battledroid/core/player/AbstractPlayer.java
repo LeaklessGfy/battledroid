@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import fr.battledroid.core.AbstractAsset;
-import fr.battledroid.core.Utils;
+import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.player.item.Inventory;
 import fr.battledroid.core.player.item.Item;

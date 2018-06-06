@@ -1,4 +1,4 @@
-package fr.battledroid.core;
+package fr.battledroid.core.utils;
 
 public final class Utils {
     /**

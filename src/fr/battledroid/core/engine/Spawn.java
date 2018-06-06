@@ -1,6 +1,6 @@
 package fr.battledroid.core.engine;
 
-import fr.battledroid.core.Point;
+import fr.battledroid.core.utils.Point;
 
 import java.util.ArrayList;
 

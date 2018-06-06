@@ -2,7 +2,7 @@ package fr.battledroid.core.map;
 
 import fr.battledroid.core.Drawable;
 import fr.battledroid.core.Position;
-import fr.battledroid.core.Point;
+import fr.battledroid.core.utils.Point;
 
 import java.util.List;
 

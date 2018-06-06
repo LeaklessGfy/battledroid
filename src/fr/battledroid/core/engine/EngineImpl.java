@@ -1,11 +1,11 @@
 package fr.battledroid.core.engine;
 
-import fr.battledroid.core.Point;
+import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.Position;
-import fr.battledroid.core.Utils;
+import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.Color;
-import fr.battledroid.core.PointF;
+import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.player.behaviour.AIMoveBehaviour;
@@ -39,13 +39,13 @@ final class EngineImpl implements Engine {
 
     @Override
     public void drawMap(Canvas canvas, PointF offset) {
-        canvas.drawColor(background);
+        background.draw(canvas);
         map.drawMap(canvas, offset);
     }
 
     @Override
     public void drawMiniMap(Canvas canvas) {
-        canvas.drawColor(background);
+        background.draw(canvas);
         PointF cellSize = new PointF(canvas.getWidth() / map.size(), canvas.getHeight() / map.size());
         map.drawMiniMap(canvas, cellSize);
     }
@@ -58,7 +58,8 @@ final class EngineImpl implements Engine {
     @Override
     public void move(Player player, Point point) {
         Position src = playersPositions.get(player);
-        Point p = src.iso().transform(point);
+        Point p = src.iso();
+        p.offset(point);
         if (!map.valid(p)) {
             return;
         }
@@ -77,7 +78,7 @@ final class EngineImpl implements Engine {
 
         for (Position pos : path) {
             playersPositions.put(player, pos);
-            src.postMove(pos);
+            src.move(pos);
             src = pos;
         }
     }

@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import fr.battledroid.core.Utils;
+import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.function.BiConsumer;
 import fr.battledroid.core.function.Consumer;
 

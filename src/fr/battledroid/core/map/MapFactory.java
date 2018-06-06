@@ -7,7 +7,8 @@ import fr.battledroid.core.Tile;
 import fr.battledroid.core.map.noise.NoiseGenerator;
 
 public final class MapFactory {
-    public static Map createRandom(AssetFactory factory, Settings settings) {
+    public static Map createRandom(AssetFactory factory) {
+        Settings settings = Settings.instance();
         int s = settings.mapSize;
 
         NoiseGenerator backgroundG = new NoiseGenerator(settings.octaves, settings.roughness, settings.scale);

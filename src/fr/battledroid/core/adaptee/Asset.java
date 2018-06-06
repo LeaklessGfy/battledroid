@@ -5,8 +5,7 @@ public interface Asset {
     int getHeight();
     int getAlphaWidth();
     int getAlphaHeight();
-    int[] getPixels();
     boolean isObstacle();
     Color getColor();
-    Object get();
+    void draw(Canvas canvas, float x, float y);
 }

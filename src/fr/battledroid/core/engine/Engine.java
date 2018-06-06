@@ -1,10 +1,10 @@
 package fr.battledroid.core.engine;
 
-import fr.battledroid.core.Point;
+import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.Position;
 import fr.battledroid.core.artifact.Artifact;
 import fr.battledroid.core.adaptee.Canvas;
-import fr.battledroid.core.PointF;
+import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.player.behaviour.AIMoveBehaviour;
 import fr.battledroid.core.player.Player;
 

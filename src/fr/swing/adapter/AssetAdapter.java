@@ -2,8 +2,10 @@ package fr.swing.adapter;
 
 import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.Color;
 
+import java.awt.*;
 import java.util.Objects;
 
 public final class AssetAdapter implements Asset {
@@ -13,12 +15,23 @@ public final class AssetAdapter implements Asset {
     private final int alphaWidth;
     private final int alphaHeight;
 
-    public AssetAdapter(java.awt.Image img, Settings settings) {
-        this.img = Objects.requireNonNull(img).getScaledInstance(settings.tileWidth, settings.tileHeight, java.awt.Image.SCALE_DEFAULT);
-        this.width = settings.tileWidth;
-        this.height = settings.tileHeight;
-        this.alphaWidth = settings.tileAlphaWidth;
-        this.alphaHeight = settings.tileAlphaHeight;
+    private AssetAdapter(Image img, int width, int height, int alphaWidth, int alphaHeight) {
+        this.img = img;
+        this.width = width;
+        this.height = height;
+        this.alphaWidth = alphaWidth;
+        this.alphaHeight = alphaHeight;
+    }
+
+    public static AssetAdapter create(Image img) {
+        Settings settings = Settings.instance();
+        Image scaled = Objects.requireNonNull(img).getScaledInstance(settings.tileWidth, settings.tileHeight, java.awt.Image.SCALE_DEFAULT);
+        int width = settings.tileWidth;
+        int height = settings.tileHeight;
+        int alphaWidth = settings.tileAlphaWidth;
+        int alphaHeight = settings.tileAlphaHeight;
+
+        return new AssetAdapter(scaled, width, height, alphaWidth, alphaHeight);
     }
 
     @Override
@@ -39,11 +52,6 @@ public final class AssetAdapter implements Asset {
     @Override
     public int getAlphaHeight() {
         return alphaHeight;
-    }
-
-    @Override
-    public int[] getPixels() {
-        return new int[0];
     }
 
     @Override
@@ -80,7 +88,8 @@ public final class AssetAdapter implements Asset {
     }
 
     @Override
-    public Object get() {
-        return img;
+    public void draw(Canvas canvas, float x, float y) {
+        Graphics g = canvas.get();
+        g.drawImage(img, (int) x, (int) y, null);
     }
 }

@@ -3,42 +3,46 @@ package fr.battledroid.core;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.player.State;
+import fr.battledroid.core.utils.Point;
+import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.utils.Points;
 
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class Tile implements Position, Drawable {
-    private final LinkedBlockingDeque<Position> moves;
     private final Point iso;
     private final PointF screen;
-    private final PointF direction;
+    private final LinkedBlockingDeque<Position> moves;
 
     private Asset asset;
-    private State state = State.WAITING;
-    private Position current;
-    private int iteration;
-    private int speed = 10;
+    private State state;
+    private Context ctx;
 
     public Tile(int x, int y, Asset asset) {
-        this.asset = asset;
-        this.moves = new LinkedBlockingDeque<>();
         this.iso = new Point(x, y);
-        this.screen = asset != null ? Points.isoToScreen(this.iso, this.asset) : new PointF();
-        this.direction = new PointF();
+        this.screen = new PointF();
+        this.moves = new LinkedBlockingDeque<>();
+        this.asset = asset;
+        this.state = State.WAITING;
+        updateScreen();
+    }
+
+    public Tile(int x, int y) {
+        this(x, y, null);
     }
 
     @Override
     public Point iso() {
-        return iso;
+        return new Point(iso);
     }
 
     @Override
     public PointF screen() {
-        return screen;
+        return new PointF(screen);
     }
 
     @Override
-    public void postMove(Position position) {
+    public void move(Position position) {
         moves.offer(position);
     }
 
@@ -50,22 +54,7 @@ public class Tile implements Position, Drawable {
     @Override
     public void setAsset(Asset asset) {
         this.asset = asset;
-        if (asset != null) {
-            this.screen.set(Points.isoToScreen(this.iso, this.asset));
-        } else {
-            this.screen.set(0, 0);
-        }
-    }
-
-    @Override
-    public void translate(Asset asset, PointF screen, PointF direction) {
-        synchronized (moves) {
-            this.asset = asset;
-            this.screen.set(screen);
-            this.direction.set(direction);
-            this.iteration = (speed / 2) + 1;
-            this.state = State.MOVING;
-        }
+        updateScreen();
     }
 
     @Override
@@ -83,7 +72,7 @@ public class Tile implements Position, Drawable {
     @Override
     public void drawMap(Canvas canvas, PointF offset) {
         if (asset != null) {
-            canvas.drawAsset(asset, screen.x + offset.x, screen.y + offset.y);
+            asset.draw(canvas, screen.x + offset.x, screen.y + offset.y);
         }
     }
 
@@ -102,39 +91,58 @@ public class Tile implements Position, Drawable {
                     nextMove();
                     break;
                 case MOVING:
-                    step();
+                    nextStep();
                     break;
             }
         }
     }
 
-    private void nextMove() {
-        current = moves.poll();
-        if (current == null) {
-            return;
+    private void updateScreen() {
+        if (asset != null) {
+            screen.set(Points.isoToScreen(iso));
+        } else {
+            screen.set(0, 0);
         }
-        PointF dst = Points.isoToScreen(current.iso(), asset);
-        state = State.MOVING;
-        direction.set(dst.x - screen.x, dst.y - screen.y);
-        System.out.println(direction);
-        iteration = 0;
     }
 
-    private void step() {
-        if (iteration == speed / 2) {
-            current.translate(asset, screen, direction);
-            state = State.WAITING;
-            asset = null;
-            return;
-        } else if (iteration >= speed) {
-            state = State.WAITING;
-            nextMove();
+    private void nextMove() {
+        Position dst = moves.poll();
+        if (dst == null) {
             return;
         }
+        PointF nScreen = Points.isoToScreen(dst.iso());
+        state = State.MOVING;
+        ctx = new Context();
+        ctx.dst = dst;
+        ctx.iteration = 0;
+        ctx.max = 10;
+        ctx.dir = new PointF(nScreen.x - screen.x, nScreen.y - screen.y);
+    }
 
-        float x = screen.x + (direction.x / speed);
-        float y = screen.y + (direction.y / speed);
-        screen.set(x, y);
-        iteration++;
+    private void nextStep() {
+        if (ctx.iteration == ctx.max / 2) {
+            state = State.WAITING;
+            ctx.dst.translate(asset, screen, ctx);
+            asset = null;
+        } else if (ctx.iteration == ctx.max) {
+            state = State.WAITING;
+            nextMove();
+        } else {
+            float x = screen.x + (ctx.dir.x / ctx.max);
+            float y = screen.y + (ctx.dir.y / ctx.max);
+            screen.set(x, y);
+            ctx.iteration++;
+        }
+    }
+
+    @Override
+    public void translate(Asset asset, PointF screen, Context context) {
+        synchronized (moves) {
+            this.state = State.MOVING;
+            this.asset = asset;
+            this.screen.set(screen);
+            this.ctx = context;
+            this.ctx.iteration++;
+        }
     }
 }

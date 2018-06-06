@@ -1,7 +1,9 @@
 package fr.battledroid.core;
 
 import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.Color;
+import fr.battledroid.core.utils.Utils;
 
 public abstract class AbstractAsset implements Asset {
     protected final Asset asset;
@@ -31,11 +33,6 @@ public abstract class AbstractAsset implements Asset {
     }
 
     @Override
-    public int[] getPixels() {
-        return asset.getPixels();
-    }
-
-    @Override
     public boolean isObstacle() {
         return asset.isObstacle();
     }
@@ -46,7 +43,7 @@ public abstract class AbstractAsset implements Asset {
     }
 
     @Override
-    public Object get() {
-        return asset.get();
+    public void draw(Canvas canvas, float x, float y) {
+        asset.draw(canvas, x, y);
     }
 }

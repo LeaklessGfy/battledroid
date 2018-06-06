@@ -1,6 +1,8 @@
 package fr.battledroid.core;
 
 import fr.battledroid.core.adaptee.Canvas;
+import fr.battledroid.core.utils.Point;
+import fr.battledroid.core.utils.PointF;
 
 public interface Drawable {
     boolean shouldDraw(PointF offset, Point canvasSize);

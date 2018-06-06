@@ -1,6 +1,6 @@
 package fr.battledroid.core.engine;
 
-import fr.battledroid.core.Point;
+import fr.battledroid.core.utils.Point;
 
 public enum Direction {
     UP, DOWN, LEFT, RIGHT, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT;

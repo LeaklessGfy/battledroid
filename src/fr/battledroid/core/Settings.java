@@ -1,6 +1,11 @@
 package fr.battledroid.core;
 
+import fr.battledroid.core.utils.RandomGenerator;
+import fr.battledroid.core.utils.Utils;
+
 public final class Settings {
+    private static Settings settings;
+
     /* MAP */
     private static final int DEFAULT_TILE_WIDTH = 256; //512
     private static final int DEFAULT_TILE_HEIGHT = 438; //876
@@ -43,7 +48,7 @@ public final class Settings {
     public final int behaviourTimeout;
     public final int seed;
 
-    public Settings(Builder b) {
+    private Settings(Builder b) {
         this.tileWidth = Utils.requireMin(b.tileWidth, 64);
         this.tileHeight = Utils.requireMin(b.tileHeight, 64);
         this.tileAlphaWidth = Utils.requireMinMax(b.tileAlphaWidth, -1, tileWidth);
@@ -64,8 +69,15 @@ public final class Settings {
         this.seed = b.seed;
     }
 
-    public Settings() {
+    private Settings() {
         this(new Builder());
+    }
+
+    public static Settings instance() {
+        if (settings == null) {
+            settings = new Settings();
+        }
+        return settings;
     }
 
     public static class Builder {

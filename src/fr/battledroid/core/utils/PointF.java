@@ -1,4 +1,4 @@
-package fr.battledroid.core;
+package fr.battledroid.core.utils;
 
 public class PointF {
     public float x;
@@ -9,6 +9,11 @@ public class PointF {
     public PointF(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    public PointF(PointF point) {
+        this.x = point.x;
+        this.y = point.y;
     }
 
     public PointF set(float x, float y) {
