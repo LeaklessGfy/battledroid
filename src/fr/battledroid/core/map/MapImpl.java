@@ -1,9 +1,10 @@
 package fr.battledroid.core.map;
 
-import fr.battledroid.core.*;
+import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.map.path.AStarFinder;
 import fr.battledroid.core.map.path.PathFinder;
+import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.utils.Points;
@@ -104,7 +105,7 @@ final class MapImpl implements Map {
     }
 
     @Override
-    public List<Position> findPath(Point src, Point dst) {
+    public List<Tile> findPath(Point src, Point dst) {
         return pathFinder.findPath(src, dst, false)
                 .stream()
                 .map(p -> overlays[p.x][p.y])
@@ -112,7 +113,7 @@ final class MapImpl implements Map {
     }
 
     @Override
-    public List<Position> findNearestPath(Point src, Point dst) {
+    public List<Tile> findNearestPath(Point src, Point dst) {
         return pathFinder.findPath(src, dst, true)
                 .stream()
                 .map(p -> overlays[p.x][p.y])
@@ -125,17 +126,17 @@ final class MapImpl implements Map {
     }
 
     @Override
-    public Position tile(Point point) {
+    public Tile background(Point point) {
         return backgrounds[point.x][point.y];
     }
 
     @Override
-    public Position overlay(Point point) {
+    public Tile overlay(Point point) {
         return overlays[point.x][point.y];
     }
 
     @Override
-    public Position screenToTile(double x, double y) {
+    public Tile screenToTile(double x, double y) {
         Point point = Points.screenToIso(x, y);
         return backgrounds[point.x][point.y];
     }

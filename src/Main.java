@@ -21,7 +21,7 @@ public class Main {
         AssetFactoryAdapter assetFactory = AssetFactoryAdapter.create(spriteFactory);
 
         Map map = MapFactory.createRandom(assetFactory);
-        Player player = PlayerFactory.createDroid(spriteFactory);
+        Player player = PlayerFactory.createDroid(assetFactory);
 
         Engine engine = EngineFactory.create(map, new ColorAdapter(Color.BLACK));
         ViewContext context = new ViewContext(engine, player);

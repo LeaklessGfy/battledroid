@@ -92,4 +92,9 @@ public final class AssetAdapter implements Asset {
         Graphics g = canvas.get();
         g.drawImage(img, (int) x, (int) y, null);
     }
+
+    @Override
+    public void tick() {
+
+    }
 }

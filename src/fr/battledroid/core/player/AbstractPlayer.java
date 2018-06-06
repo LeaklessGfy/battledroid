@@ -1,31 +1,36 @@
 package fr.battledroid.core.player;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.LinkedBlockingDeque;
 
-import fr.battledroid.core.AbstractAsset;
+import fr.battledroid.core.adaptee.Color;
+import fr.battledroid.core.map.tile.Context;
+import fr.battledroid.core.adaptee.Canvas;
+import fr.battledroid.core.function.Consumer;
+import fr.battledroid.core.map.tile.Tile;
+import fr.battledroid.core.utils.PointF;
+import fr.battledroid.core.utils.Points;
 import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.player.item.Inventory;
 import fr.battledroid.core.player.item.Item;
-import fr.battledroid.core.function.BiConsumer;
-import fr.battledroid.core.function.Consumer;
 
-abstract class AbstractPlayer extends AbstractAsset implements Player {
-    final static double DEFAULT_HEALTH = 100;
-    final static int DEFAULT_DEFENSE = 0;
-    final static int DEFAULT_MAX_DEFENSE = 100;
-    final static int DEFAULT_SPEED = 10;
-    final static int DEFAULT_FIELD = 1;
-
+abstract class AbstractPlayer implements Player {
     private final String uuid;
+    private final Asset asset;
     private final Item weapon;
     private final Item shield;
     private final Inventory inventory;
     private final ArrayList<PlayerObserver> observers;
+    private final LinkedBlockingDeque<Tile> moves;
+    private final Consumer<Tile> onChange;
+    private final Consumer<Tile> onArrive;
+    private final boolean cpu;
 
+    private Tile current;
+    private Tile last;
     private double health;
     private double maxHealth;
     private int defense;
@@ -35,12 +40,30 @@ abstract class AbstractPlayer extends AbstractAsset implements Player {
     private State state;
 
     AbstractPlayer(Builder builder) {
-        super(builder.img);
         this.uuid = UUID.randomUUID().toString();
+        this.asset = builder.img;
         this.weapon = builder.weapon;
         this.shield = builder.shield;
         this.inventory = builder.inventory;
         this.observers = builder.observers;
+        this.moves = new LinkedBlockingDeque<>();
+        this.onChange = new Consumer<Tile>() {
+            @Override
+            public void accept(Tile val) {
+                synchronized (moves) {
+                    current = val;
+                }
+            }
+        };
+        this.onArrive = new Consumer<Tile>() {
+            @Override
+            public void accept(Tile val) {
+                synchronized (moves) {
+                    state = State.WAITING;
+                }
+            }
+        };
+        this.cpu = builder.cpu;
         this.health = builder.health;
         this.maxHealth = builder.maxHealth;
         this.defense = builder.defense;
@@ -82,43 +105,27 @@ abstract class AbstractPlayer extends AbstractAsset implements Player {
 
     @Override
     public Inventory inventory() {
-        return new Inventory() {
-            @Override
-            public int size() {
-                return inventory.size();
-            }
-
-            @Override
-            public List<Item> asList() {
-                return inventory.asList();
-            }
-
-            @Override
-            public Iterator<Item> iterator() {
-                return inventory.iterator();
-            }
-
-            @Override
-            public void forEach(Consumer<? super Item> consumer) {
-                inventory.forEach(consumer);
-            }
-
-            @Override
-            public void forEach(BiConsumer<Item, Integer> consumer) {
-                inventory.forEach(consumer);
-            }
-
-            @Override
-            public int getQuantity(Item item) {
-                return inventory.getQuantity(item);
-            }
-        };
+        return inventory;
     }
 
     @Override
     public State state() {
         synchronized (inventory) {
             return state;
+        }
+    }
+
+    @Override
+    public Tile current() {
+        synchronized (moves) {
+            return current;
+        }
+    }
+
+    @Override
+    public Tile last() {
+        synchronized (moves) {
+            return last;
         }
     }
 
@@ -141,6 +148,11 @@ abstract class AbstractPlayer extends AbstractAsset implements Player {
     }
 
     @Override
+    public boolean isCPU() {
+        return cpu;
+    }
+
+    @Override
     public void addSpeed(int speed) {
         this.speed = Math.max(maxSpeed, this.speed - speed);
         for (PlayerObserver o : observers) {
@@ -154,6 +166,12 @@ abstract class AbstractPlayer extends AbstractAsset implements Player {
         for (PlayerObserver o : observers) {
             o.updateItem(item, isNewItem);
         }
+    }
+
+    @Override
+    public void setCurrent(Tile position) {
+        this.current = position;
+        this.last = last == null ? current : last;
     }
 
     @Override
@@ -171,6 +189,20 @@ abstract class AbstractPlayer extends AbstractAsset implements Player {
         for (PlayerObserver o : observers) {
             o.updateDefense(defense);
             o.updateHealth(health);
+        }
+    }
+
+    @Override
+    public void move(Tile tile) {
+        System.out.println("OFFER " + tile);
+        moves.offer(tile);
+        last = tile;
+    }
+
+    @Override
+    public void move(List<Tile> path) {
+        for (Tile tile : path) {
+            moves.offer(tile);
         }
     }
 
@@ -200,6 +232,67 @@ abstract class AbstractPlayer extends AbstractAsset implements Player {
     }
 
     @Override
+    public int getWidth() {
+        return asset.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return asset.getHeight();
+    }
+
+    @Override
+    public int getAlphaWidth() {
+        return asset.getAlphaWidth();
+    }
+
+    @Override
+    public int getAlphaHeight() {
+        return asset.getAlphaHeight();
+    }
+
+    @Override
+    public boolean isObstacle() {
+        return true;
+    }
+
+    @Override
+    public Color getColor() {
+        return asset.getColor();
+    }
+
+    @Override
+    public void draw(Canvas canvas, float x, float y) {
+        asset.draw(canvas, x, y);
+    }
+
+    @Override
+    public void tick() {
+        synchronized (moves) {
+            switch (state) {
+                case WAITING:
+                    nextMove();
+                    break;
+                case MOVING:
+                    current.nextStep();
+                    break;
+            }
+        }
+    }
+
+    private void nextMove() {
+        Tile dst = moves.poll();
+        if (dst == null) {
+            return;
+        }
+        PointF screen = current.screen();
+        PointF nScreen = Points.isoToScreen(dst.iso());
+        state = State.MOVING;
+        Context ctx = new Context(dst, new PointF(nScreen.x - screen.x, nScreen.y - screen.y), 10, onChange, onArrive);
+        current.move(ctx);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -215,117 +308,5 @@ abstract class AbstractPlayer extends AbstractAsset implements Player {
     @Override
     public String toString() {
         return uuid;
-    }
-
-    static class Builder {
-        private int x;
-        private int y;
-        private Asset img;
-
-        private Item weapon;
-        private Item shield;
-        private final Inventory inventory;
-        private final ArrayList<PlayerObserver> observers;
-
-        private double health;
-        private double maxHealth;
-        private int defense;
-        private int maxDefense;
-        private int speed;
-        private int maxSpeed;
-        private int field;
-
-        Builder(Asset img, Item weapon, Item shield) {
-            this.img = Utils.requireNonNull(img);
-            this.weapon = Utils.requireNonNull(weapon);
-            this.shield = Utils.requireNonNull(shield);
-            this.inventory = new Inventory();
-            this.observers = new ArrayList<>();
-            this.health = DEFAULT_HEALTH;
-            this.maxHealth = DEFAULT_HEALTH;
-            this.defense = DEFAULT_DEFENSE;
-            this.maxDefense = DEFAULT_MAX_DEFENSE;
-            this.speed = DEFAULT_SPEED;
-            this.maxSpeed = DEFAULT_SPEED;
-            this.field = DEFAULT_FIELD;
-        }
-
-        public Builder setImage(Asset img) {
-            this.img = Utils.requireNonNull(img);
-            return this;
-        }
-
-        public Builder setWeapon(Item weapon) {
-            this.weapon = Utils.requireNonNull(weapon);
-            return this;
-        }
-
-        public Builder setShield(Item shield) {
-            this.shield = Utils.requireNonNull(shield);
-            return this;
-        }
-
-        public Builder setHealth(double health) {
-            this.health = Utils.requireMin(health, 0);
-            if (this.health > maxHealth) {
-                this.health = maxHealth;
-            }
-            return this;
-        }
-
-        public Builder setMaxHealth(double maxHealth) {
-            this.maxHealth = Utils.requireMin(maxHealth, 0);
-            if (this.health > maxHealth) {
-                this.health = maxHealth;
-            }
-            return this;
-        }
-
-        public Builder setDefense(int defense) {
-            this.defense = Utils.requireMin(defense, 0);
-            if (this.defense > maxDefense) {
-                this.defense = maxDefense;
-            }
-            return this;
-        }
-
-        public Builder setMaxDefense(int maxDefense) {
-            this.maxDefense = Utils.requireMin(maxDefense, 0);
-            if (this.defense > maxDefense) {
-                this.defense = maxDefense;
-            }
-            return this;
-        }
-
-        public Builder setSpeed(int speed) {
-            this.speed = Utils.requireMin(speed, 1);
-            if (this.speed < maxSpeed) {
-                this.speed = maxSpeed;
-            }
-            return this;
-        }
-
-        public Builder setMaxSpeed(int maxSpeed) {
-            this.maxSpeed = Utils.requireMin(maxSpeed, 1);
-            if (this.speed < maxSpeed) {
-                this.speed = maxSpeed;
-            }
-            return this;
-        }
-
-        public Builder setField(int field) {
-            this.field = Utils.requireMin(field, 1);
-            return this;
-        }
-
-        public Builder attach(PlayerObserver observer) {
-            this.observers.add(Utils.requireNonNull(observer));
-            return this;
-        }
-
-        public Builder addItem(Item item) {
-            this.inventory.add(Utils.requireNonNull(item));
-            return this;
-        }
     }
 }

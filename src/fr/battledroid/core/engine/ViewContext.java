@@ -1,6 +1,6 @@
 package fr.battledroid.core.engine;
 
-import fr.battledroid.core.Position;
+import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.utils.PointF;
@@ -25,8 +25,8 @@ public final class ViewContext {
     }
 
     public void move(double x, double y) {
-        Position dst = engine.findPosition(x, y);
-        engine.move(player, dst);
+        Tile tile = engine.find(x, y);
+        engine.move(player, tile);
     }
 
     public void move(Direction direction) {

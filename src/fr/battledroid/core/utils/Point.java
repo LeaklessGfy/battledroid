@@ -16,9 +16,10 @@ public class Point {
         this.y = point.y;
     }
 
-    public void offset(Point point) {
+    public Point offset(Point point) {
         this.x += point.x;
         this.y += point.y;
+        return this;
     }
 
     @Override

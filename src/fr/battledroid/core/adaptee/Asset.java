@@ -8,4 +8,5 @@ public interface Asset {
     boolean isObstacle();
     Color getColor();
     void draw(Canvas canvas, float x, float y);
+    void tick();
 }

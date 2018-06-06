@@ -1,7 +1,7 @@
 package fr.battledroid.core.engine;
 
+import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.utils.Point;
-import fr.battledroid.core.Position;
 import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.Color;
@@ -10,14 +10,14 @@ import fr.battledroid.core.map.Map;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.player.behaviour.AIMoveBehaviour;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 final class EngineImpl implements Engine {
     private final Map map;
     private final Color background;
-    private final HashMap<Player, Position> playersPositions;
-    private final Spawn spawn;
+    private final HashSet<Player> players;
+    private final Spawn spawner;
 
     private Listener listener;
     private AIMoveBehaviour behaviour;
@@ -25,16 +25,16 @@ final class EngineImpl implements Engine {
     EngineImpl(Map map, Color background) {
         this.map = Utils.requireNonNull(map);
         this.background = Utils.requireNonNull(background);
-        this.playersPositions = new HashMap<>();
-        this.spawn = new Spawn(2, map.size());
+        this.players = new HashSet<>();
+        this.spawner = new Spawn(2, map.size());
     }
 
     @Override
     public void addPlayer(Player player) {
-        Point p = spawn.spawn();
-        Position position = map.overlay(p);
-        playersPositions.put(player, position);
-        position.setAsset(player);
+        Point p = spawner.spawn();
+        Tile tile = map.overlay(p);
+        player.setCurrent(tile);
+        tile.setAsset(player);
     }
 
     @Override
@@ -57,34 +57,30 @@ final class EngineImpl implements Engine {
 
     @Override
     public void move(Player player, Point point) {
-        Position src = playersPositions.get(player);
-        Point p = src.iso();
-        p.offset(point);
+        Tile src = player.last();
+        Point p = src.iso().offset(point);
         if (!map.valid(p)) {
             return;
         }
-        Position dst = map.overlay(p);
-        move(player, dst);
-    }
-
-    @Override
-    public void move(Player player, Position dst) {
+        Tile dst = map.overlay(p);
         if (dst.isBusy()) {
             return;
         }
-
-        Position src = playersPositions.get(player);
-        List<Position> path = map.findPath(src.iso(), dst.iso());
-
-        for (Position pos : path) {
-            playersPositions.put(player, pos);
-            src.move(pos);
-            src = pos;
-        }
+        player.move(dst);
     }
 
     @Override
-    public Position findPosition(double x, double y) {
+    public void move(Player player, Tile tile) {
+        if (tile.isBusy()) {
+            return;
+        }
+        Tile src = player.current();
+        List<Tile> path = map.findPath(src.iso(), tile.iso());
+        player.move(path);
+    }
+
+    @Override
+    public Tile find(double x, double y) {
         return map.screenToTile(x, y);
     }
 

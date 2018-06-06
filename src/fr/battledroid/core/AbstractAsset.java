@@ -46,4 +46,9 @@ public abstract class AbstractAsset implements Asset {
     public void draw(Canvas canvas, float x, float y) {
         asset.draw(canvas, x, y);
     }
+
+    @Override
+    public void tick() {
+        asset.tick();
+    }
 }
