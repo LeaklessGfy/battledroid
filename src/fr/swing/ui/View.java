@@ -46,6 +46,12 @@ public final class View extends JPanel {
                     case KeyEvent.VK_RIGHT:
                         context.move(Direction.RIGHT);
                         break;
+                    case KeyEvent.VK_UP:
+                        context.move(Direction.UP);
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        context.move(Direction.DOWN);
+                        break;
                 }
                 repaint();
             }
