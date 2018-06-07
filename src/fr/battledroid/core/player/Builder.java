@@ -3,6 +3,7 @@ package fr.battledroid.core.player;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.player.item.Inventory;
 import fr.battledroid.core.player.item.Item;
+import fr.battledroid.core.player.item.Weapon;
 import fr.battledroid.core.utils.Utils;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public final class Builder {
     int y;
     Asset img;
 
-    Item weapon;
+    Weapon weapon;
     Item shield;
     final Inventory inventory;
     final ArrayList<PlayerObserver> observers;
@@ -32,7 +33,7 @@ public final class Builder {
     int maxSpeed;
     int field;
 
-    Builder(Asset img, Item weapon, Item shield) {
+    Builder(Asset img, Weapon weapon, Item shield) {
         this.img = Utils.requireNonNull(img);
         this.weapon = Utils.requireNonNull(weapon);
         this.shield = Utils.requireNonNull(shield);
@@ -53,7 +54,7 @@ public final class Builder {
         return this;
     }
 
-    public Builder setWeapon(Item weapon) {
+    public Builder setWeapon(Weapon weapon) {
         this.weapon = Utils.requireNonNull(weapon);
         return this;
     }

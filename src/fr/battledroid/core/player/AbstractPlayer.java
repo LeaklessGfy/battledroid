@@ -10,6 +10,9 @@ import fr.battledroid.core.map.tile.Context;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
+import fr.battledroid.core.particle.Particle;
+import fr.battledroid.core.player.item.Weapon;
+import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.utils.Points;
 import fr.battledroid.core.utils.Utils;
@@ -20,7 +23,7 @@ import fr.battledroid.core.player.item.Item;
 abstract class AbstractPlayer implements Player {
     private final String uuid;
     private final Asset asset;
-    private final Item weapon;
+    private final Weapon weapon;
     private final Item shield;
     private final Inventory inventory;
     private final ArrayList<PlayerObserver> observers;
@@ -84,7 +87,7 @@ abstract class AbstractPlayer implements Player {
     }
 
     @Override
-    public Item weapon() {
+    public Weapon weapon() {
         return weapon;
     }
 
@@ -203,6 +206,11 @@ abstract class AbstractPlayer implements Player {
         for (Tile tile : path) {
             moves.offer(tile);
         }
+    }
+
+    @Override
+    public Particle shoot(Point offset) {
+        return weapon.shoot(current.iso().clone(), current.screen().clone(), offset);
     }
 
     @Override

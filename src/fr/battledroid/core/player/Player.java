@@ -2,15 +2,18 @@ package fr.battledroid.core.player;
 
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.map.tile.Tile;
+import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.player.item.Inventory;
 import fr.battledroid.core.player.item.Item;
+import fr.battledroid.core.player.item.Weapon;
+import fr.battledroid.core.utils.Point;
 
 import java.util.List;
 
 public interface Player extends Asset {
     double health();
     int defense();
-    Item weapon();
+    Weapon weapon();
     Item shield();
     double maxHealth();
     int maxDefense();
@@ -29,6 +32,7 @@ public interface Player extends Asset {
     void takeDamage(int damage);
     void move(Tile tile);
     void move(List<Tile> path);
+    Particle shoot(Point offset);
 
     boolean isDead();
     boolean isCPU();

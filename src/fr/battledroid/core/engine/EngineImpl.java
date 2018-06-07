@@ -3,6 +3,7 @@ package fr.battledroid.core.engine;
 import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.particle.Laser;
+import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.adaptee.Canvas;
@@ -89,9 +90,8 @@ final class EngineImpl implements Engine {
 
     @Override
     public void shoot(Player player, Point point) {
-        Point src = player.current().iso().clone();
-        PointF screen = player.current().screen().clone();
-        map.addParticle(new Laser(src, screen, point));
+        Particle particle = player.shoot(point);
+        map.addParticle(particle);
     }
 
     @Override
