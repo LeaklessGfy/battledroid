@@ -1,5 +1,6 @@
 package fr.slick.ui;
 
+import fr.battledroid.core.Direction;
 import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.AssetFactory;
 import fr.battledroid.core.adaptee.SpriteFactory;
@@ -21,7 +22,7 @@ import org.newdawn.slick.*;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-public class GameMain extends BasicGame {
+public final class GameMain extends BasicGame {
     private final AssetFactory factory;
     private ViewContext context;
     private CanvasAdapter adapter;
@@ -41,8 +42,8 @@ public class GameMain extends BasicGame {
     public static void main(String[] arguments) {
         try {
             Settings settings = new Settings.Builder()
-                    .setScreenWidth(640)
-                    .setScreenHeight(480)
+                    .setScreenWidth(1000)
+                    .setScreenHeight(700)
                     .build();
 
             AppGameContainer app = new AppGameContainer(GameMain.create());
@@ -73,6 +74,8 @@ public class GameMain extends BasicGame {
 
         context = new ViewContext(engine, player);
         adapter = new CanvasAdapter(container.getWidth(), container.getHeight());
+
+        container.getInput().enableKeyRepeat();
     }
 
     @Override
@@ -83,5 +86,35 @@ public class GameMain extends BasicGame {
     @Override
     public void render(GameContainer container, Graphics g) throws SlickException {
         context.draw(adapter.wrap(g));
+    }
+
+    @Override
+    public void keyPressed(int key, char c) {
+        switch (key) {
+            case Input.KEY_Q:
+                context.move(Direction.LEFT);
+                break;
+            case Input.KEY_D:
+                context.move(Direction.RIGHT);
+                break;
+            case Input.KEY_Z:
+                context.move(Direction.UP);
+                break;
+            case Input.KEY_S:
+                context.move(Direction.DOWN);
+                break;
+            case Input.KEY_LEFT:
+                context.shoot(Direction.LEFT);
+                break;
+            case Input.KEY_RIGHT:
+                context.shoot(Direction.RIGHT);
+                break;
+            case Input.KEY_UP:
+                context.shoot(Direction.UP);
+                break;
+            case Input.KEY_DOWN:
+                context.shoot(Direction.DOWN);
+                break;
+        }
     }
 }

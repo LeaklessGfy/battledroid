@@ -1,7 +1,8 @@
 package fr.battledroid.core;
 
-import fr.battledroid.core.utils.RandomGenerator;
 import fr.battledroid.core.utils.Utils;
+
+import java.util.Random;
 
 public final class Settings {
     private static Settings settings;
@@ -16,10 +17,6 @@ public final class Settings {
     /* SCREEN */
     private static final int DEFAULT_SCREEN_WIDTH = 1000;
     private static final int DEFAULT_SCREEN_HEIGHT = 700;
-
-    /* FOLDER */
-    private static final String DEFAULT_RESOURCES = "resources";
-    private static final String DEFAULT_THEME = "pixel";
 
     /* NOISE */
     private static final int DEFAULT_OCTAVES = 4;
@@ -42,9 +39,6 @@ public final class Settings {
     public final int screenWidth;
     public final int screenHeight;
 
-    public final String resources;
-    public final String theme;
-
     public final int octaves;
     public final double roughness;
     public final double scale;
@@ -65,9 +59,6 @@ public final class Settings {
         this.screenWidth = b.screenWidth;
         this.screenHeight = b.screenHeight;
 
-        this.resources = Utils.requireNonNull(b.resources);
-        this.theme = Utils.requireNonNull(b.theme);
-
         this.octaves = b.octaves;
         this.roughness = b.roughness;
         this.scale = b.scale;
@@ -87,27 +78,24 @@ public final class Settings {
     }
 
     public static class Builder {
-        public int tileWidth;
-        public int tileHeight;
-        public int tileAlphaWidth;
-        public int tileAlphaHeight;
-        public int mapSize;
+        private int tileWidth;
+        private int tileHeight;
+        private int tileAlphaWidth;
+        private int tileAlphaHeight;
+        private int mapSize;
 
-        public int screenWidth;
-        public int screenHeight;
+        private int screenWidth;
+        private int screenHeight;
 
-        public String resources;
-        public String theme;
+        private int octaves;
+        private double roughness;
+        private double scale;
 
-        public int octaves;
-        public double roughness;
-        public double scale;
+        private int shrinkTimeout;
+        private int shrinkRadius;
 
-        public int shrinkTimeout;
-        public int shrinkRadius;
-
-        public int behaviourTimeout;
-        public int seed;
+        private int behaviourTimeout;
+        private int seed;
 
         public Builder() {
             tileWidth = DEFAULT_TILE_WIDTH;
@@ -119,9 +107,6 @@ public final class Settings {
             screenWidth = DEFAULT_SCREEN_WIDTH;
             screenHeight = DEFAULT_SCREEN_HEIGHT;
 
-            resources = DEFAULT_RESOURCES;
-            theme = DEFAULT_THEME;
-
             octaves = DEFAULT_OCTAVES;
             roughness = DEFAULT_ROUGHNESS;
             scale = DEFAULT_SCALE;
@@ -130,12 +115,37 @@ public final class Settings {
             shrinkRadius = DEFAULT_SHRINK_RADIUS;
 
             behaviourTimeout = DEFAULT_BEHAVIOUR_TIMEOUT;
-            seed = RandomGenerator.randomInt(0, Integer.MAX_VALUE - 1);
+            seed = new Random(System.currentTimeMillis()).nextInt(Integer.MAX_VALUE);
         }
 
         public Settings build() {
             settings = new Settings(this);
             return settings;
+        }
+
+        public Builder setTileWidth(int tileWidth) {
+            this.tileWidth = tileWidth;
+            return this;
+        }
+
+        public Builder setTileHeight(int tileHeight) {
+            this.tileHeight = tileHeight;
+            return this;
+        }
+
+        public Builder setTileAlphaWidth(int tileAlphaWidth) {
+            this.tileAlphaWidth = tileAlphaWidth;
+            return this;
+        }
+
+        public Builder setTileAlphaHeight(int tileAlphaHeight) {
+            this.tileAlphaHeight = tileAlphaHeight;
+            return this;
+        }
+
+        public Builder setMapSize(int mapSize) {
+            this.mapSize = mapSize;
+            return this;
         }
 
         public Builder setScreenWidth(int width) {
@@ -145,6 +155,41 @@ public final class Settings {
 
         public Builder setScreenHeight(int height) {
             this.screenHeight = height;
+            return this;
+        }
+
+        public Builder setOctaves(int octaves) {
+            this.octaves = octaves;
+            return this;
+        }
+
+        public Builder setRoughness(double roughness) {
+            this.roughness = roughness;
+            return this;
+        }
+
+        public Builder setScale(double scale) {
+            this.scale = scale;
+            return this;
+        }
+
+        public Builder setShrinkTimeout(int shrinkTimeout) {
+            this.shrinkTimeout = shrinkTimeout;
+            return this;
+        }
+
+        public Builder setShrinkRadius(int shrinkRadius) {
+            this.shrinkRadius = shrinkRadius;
+            return this;
+        }
+
+        public Builder setBehaviourTimeout(int behaviourTimeout) {
+            this.behaviourTimeout = behaviourTimeout;
+            return this;
+        }
+
+        public Builder setSeed(int seed) {
+            this.seed = seed;
             return this;
         }
     }

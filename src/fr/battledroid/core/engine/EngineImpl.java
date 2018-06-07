@@ -1,5 +1,6 @@
 package fr.battledroid.core.engine;
 
+import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.particle.Laser;
 import fr.battledroid.core.utils.Point;
@@ -57,7 +58,7 @@ final class EngineImpl implements Engine {
     }
 
     @Override
-    public void move(Player player, Point point) {
+    public void move(Player player, Point point, Consumer<Tile> onArrive) {
         Point src = player.last().iso().clone();
         Point p = src.offset(point);
         if (!map.valid(p)) {
@@ -68,10 +69,11 @@ final class EngineImpl implements Engine {
             return;
         }
         player.move(dst);
+        onArrive.accept(dst);
     }
 
     @Override
-    public void move(Player player, Tile tile) {
+    public void move(Player player, Tile tile, Consumer<Tile> onArrive) {
         if (tile.isBusy()) {
             return;
         }
