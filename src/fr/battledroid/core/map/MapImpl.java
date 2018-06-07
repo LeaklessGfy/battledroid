@@ -47,6 +47,11 @@ final class MapImpl implements Map {
     }
 
     @Override
+    public Tile tile(int x, int y) {
+        return tiles[x][y];
+    }
+
+    @Override
     public Tile tile(Point point) {
         return tiles[point.x][point.y];
     }

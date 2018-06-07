@@ -119,6 +119,9 @@ public final class Settings {
         }
 
         public Settings build() {
+            if (settings != null) {
+                throw new IllegalStateException("Settings already built");
+            }
             settings = new Settings(this);
             return settings;
         }

@@ -1,5 +1,8 @@
 package fr.battledroid.core.engine;
 
+import fr.battledroid.core.Settings;
+import fr.battledroid.core.artifact.Artifact;
+import fr.battledroid.core.artifact.ArtifactFactory;
 import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.particle.Particle;
@@ -14,6 +17,7 @@ import fr.battledroid.core.player.behaviour.AIMoveBehaviour;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 final class EngineImpl implements Engine {
     private final Map map;
@@ -37,6 +41,24 @@ final class EngineImpl implements Engine {
         Point p = spawner.spawn();
         Tile tile = map.tile(p);
         tile.setOverlay(player);
+    }
+
+    @Override
+    public void generateArtifact(ArtifactFactory factory) {
+        Settings s = Settings.instance();
+        int size = s.mapSize * s.mapSize;
+        int nbArtifact = size * 10 / 100;
+        Random rand = new Random(s.seed);
+
+        for (int i = 0; i < nbArtifact; i++) {
+            Artifact artifact = factory.createRandom();
+            int x = rand.nextInt(s.mapSize) % s.mapSize;
+            int y = rand.nextInt(s.mapSize) % s.mapSize;
+            Tile tile = map.tile(x, y);
+            if (!tile.isBusy()) {
+                tile.setOverlay(artifact);
+            }
+        }
     }
 
     @Override

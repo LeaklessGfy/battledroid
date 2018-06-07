@@ -4,7 +4,10 @@ import fr.battledroid.core.Direction;
 import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.AssetFactory;
 import fr.battledroid.core.adaptee.SpriteFactory;
-import fr.battledroid.core.adapter.DefaultAssetFactory;
+import fr.battledroid.core.artifact.ArtifactFactory;
+import fr.battledroid.core.artifact.BombMalus;
+import fr.battledroid.core.artifact.HealthBonus;
+import fr.battledroid.core.artifact.SpeedBonus;
 import fr.battledroid.core.engine.Engine;
 import fr.battledroid.core.engine.EngineFactory;
 import fr.battledroid.core.engine.ViewContext;
@@ -36,7 +39,7 @@ public final class GameMain extends BasicGame {
 
     public static GameMain create() {
         SpriteFactory spriteFactory = new SlickSpriteFactory();
-        AssetFactory assetFactory = DefaultAssetFactory.create(spriteFactory);
+        AssetFactory assetFactory = new AssetFactory(spriteFactory);
 
         return new GameMain(assetFactory);
     }
@@ -79,6 +82,10 @@ public final class GameMain extends BasicGame {
 
         factory.registerPlayer(Droid.class, Paths.get("resources/players/droid.png"));
 
+        factory.registerArtifact(BombMalus.class, Paths.get("resources/artifacts/bomb_malus.png"));
+        factory.registerArtifact(SpeedBonus.class, Paths.get("resources/artifacts/speed_bonus.png"));
+        factory.registerArtifact(HealthBonus.class, Paths.get("resources/artifacts/health_bonus.png"));
+
         Map map = MapFactory.createRandom(factory);
         Player player = PlayerFactory.createDroid(factory);
         player.attach(new PlayerObserver() {
@@ -89,7 +96,6 @@ public final class GameMain extends BasicGame {
 
             @Override
             public void updateDefense(int defense) {
-
             }
 
             @Override
@@ -103,8 +109,11 @@ public final class GameMain extends BasicGame {
             }
         });
 
+        ArtifactFactory artifactFactory = ArtifactFactory.create(factory);
+
         Engine engine = EngineFactory.create(map, new ColorAdapter(Color.black));
         engine.addPlayer(player);
+        engine.generateArtifact(artifactFactory);
 
         context = new ViewContext(engine, player);
         adapter = new CanvasAdapter(container.getWidth(), container.getHeight());

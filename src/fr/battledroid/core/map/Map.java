@@ -12,6 +12,7 @@ public interface Map extends MasterDrawable, Ticker {
     int size();
     boolean isBusy(int x, int y);
     boolean isBusy(Point point);
+    Tile tile(int x, int y);
     Tile tile(Point point);
     Tile screenToTile(double x, double y);
     List<Particle> particles();

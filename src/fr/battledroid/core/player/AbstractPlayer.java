@@ -7,13 +7,10 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adapter.AssetWrapper;
-import fr.battledroid.core.map.tile.Context;
-import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.player.item.Weapon;
 import fr.battledroid.core.utils.*;
-import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.player.item.Inventory;
 import fr.battledroid.core.player.item.Item;
 
@@ -27,7 +24,7 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     private final boolean cpu;
 
     private PointF screen;
-    private Context ctx;
+    private Move ctx;
     private Tile last;
 
     private double health;
@@ -266,7 +263,7 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
         state = State.MOVING;
         Tile src = getCurrent();
         PointF dir = Points.movement(src.iso(), dst.iso());
-        ctx = new Context(dst, dir, speed);
+        ctx = new Move(dst, dir, speed);
         screen.set(Points.isoToScreen(src.iso()));
     }
 

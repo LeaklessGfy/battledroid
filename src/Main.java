@@ -1,5 +1,4 @@
 import fr.battledroid.core.adaptee.AssetFactory;
-import fr.battledroid.core.adapter.DefaultAssetFactory;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.player.PlayerFactory;
 import fr.swing.adapter.CanvasAdapter;
@@ -21,7 +20,7 @@ import java.awt.image.BufferedImage;
 public class Main {
     public static void main(String[] args) {
         SwingSpriteFactory spriteFactory = new SwingSpriteFactory();
-        AssetFactory assetFactory = DefaultAssetFactory.create(spriteFactory);
+        AssetFactory assetFactory = new AssetFactory(spriteFactory);
 
         Map map = MapFactory.createRandom(assetFactory);
         Player player = PlayerFactory.createDroid(assetFactory);

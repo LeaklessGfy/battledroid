@@ -1,5 +1,6 @@
 package fr.battledroid.core.engine;
 
+import fr.battledroid.core.artifact.ArtifactFactory;
 import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.utils.Point;
@@ -17,6 +18,7 @@ public interface Engine {
     }
 
     void addPlayer(Player player);
+    void generateArtifact(ArtifactFactory factory);
 
     void drawMap(Canvas canvas, PointF offset);
     void drawMiniMap(Canvas canvas);

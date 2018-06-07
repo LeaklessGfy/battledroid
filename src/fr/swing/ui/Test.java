@@ -2,7 +2,6 @@ package fr.swing.ui;
 
 import fr.battledroid.core.Direction;
 import fr.battledroid.core.adaptee.AssetFactory;
-import fr.battledroid.core.adapter.DefaultAssetFactory;
 import fr.battledroid.core.engine.Engine;
 import fr.battledroid.core.engine.EngineFactory;
 import fr.battledroid.core.engine.ViewContext;
@@ -50,7 +49,7 @@ public class Test extends Thread {
 
     public Test() {
         SwingSpriteFactory spriteFactory = new SwingSpriteFactory();
-        AssetFactory assetFactory = DefaultAssetFactory.create(spriteFactory);
+        AssetFactory assetFactory = new AssetFactory(spriteFactory);
 
         Map map = MapFactory.createRandom(assetFactory);
         Player player = PlayerFactory.createDroid(assetFactory);
