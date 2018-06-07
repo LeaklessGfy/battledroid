@@ -2,7 +2,6 @@ package fr.battledroid.core.engine;
 
 import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
-import fr.battledroid.core.particle.Laser;
 import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.Utils;
@@ -34,28 +33,32 @@ final class EngineImpl implements Engine {
 
     @Override
     public void addPlayer(Player player) {
+        players.add(player);
         Point p = spawner.spawn();
-        Tile tile = map.overlay(p);
-        player.setCurrent(tile);
-        tile.setAsset(player);
+        Tile tile = map.tile(p);
+        tile.setOverlay(player);
+        System.out.println(player.getCurrent());
     }
 
     @Override
     public void drawMap(Canvas canvas, PointF offset) {
         canvas.drawColor(background);
-        map.drawMap(canvas, offset);
+        map.draw(canvas, offset);
     }
 
     @Override
     public void drawMiniMap(Canvas canvas) {
         canvas.drawColor(background);
         PointF cellSize = new PointF(canvas.getWidth() / map.size(), canvas.getHeight() / map.size());
-        map.drawMiniMap(canvas, cellSize);
+        //map.drawMiniMap(canvas, cellSize);
     }
 
     @Override
     public void tick() {
         map.tick();
+        for (Player player : players) {
+            checkParticleCollide(player);
+        }
     }
 
     @Override
@@ -65,7 +68,7 @@ final class EngineImpl implements Engine {
         if (!map.valid(p)) {
             return;
         }
-        Tile dst = map.overlay(p);
+        Tile dst = map.tile(p);
         if (dst.isBusy()) {
             return;
         }
@@ -78,7 +81,7 @@ final class EngineImpl implements Engine {
         if (tile.isBusy()) {
             return;
         }
-        Tile src = player.current();
+        Tile src = player.getCurrent();
         List<Tile> path = map.findPath(src.iso(), tile.iso());
         player.move(path);
     }
@@ -102,5 +105,29 @@ final class EngineImpl implements Engine {
     @Override
     public void setBehaviour(AIMoveBehaviour behaviour) {
         this.behaviour = Utils.requireNonNull(behaviour);
+    }
+
+    private void checkPlayerCollide(Player player) {
+        players.forEach(enemy -> {
+            if (enemy.equals(player)) {
+                return;
+            }
+
+            if (enemy.hasCollide(player)) {}
+        });
+
+    }
+
+    private void checkArtifactCollide() {
+
+    }
+
+    private void checkParticleCollide(Player player) {
+        List<Particle> particles = map.particles();
+        for (Particle particle : particles) {
+            if (particle.hasCollide(player)) {
+                particle.onCollide(player);
+            }
+        }
     }
 }

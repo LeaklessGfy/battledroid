@@ -21,7 +21,7 @@ public final class ViewContext {
     public ViewContext(Engine engine, Player player) {
         this.engine = Utils.requireNonNull(engine);
         this.player = Utils.requireNonNull(player);
-        this.offset.set(Points.center(player.current()));
+        this.offset.set(Points.center(player.getCurrent()));
     }
 
     public void tick() {
@@ -70,13 +70,12 @@ public final class ViewContext {
     }
 
     private void smoothCenterOn(Tile tile) {
-        PointF center = Points.center(tile);
+        PointF c = Points.center(tile);
         //center.offset(-diff.x, -diff.y);
 
-        int dist = Points.dist(offset, center);
+        int dist = Points.dist(offset, c);
         centerI = 0;
         centerSpeed = dist / 15;
-        this.center.set((center.x - offset.x) / centerSpeed, (center.y - offset.y) / centerSpeed);
-        //onCenter = true;
+        center.set((c.x - offset.x) / centerSpeed, (c.y - offset.y) / centerSpeed);
     }
 }

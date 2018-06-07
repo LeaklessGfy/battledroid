@@ -4,12 +4,12 @@ import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.utils.PointF;
 
 public final class Context {
-    final Tile dst;
-    final PointF dir;
-    final int max;
-    final Consumer<Tile> onChange;
-    final Consumer<Tile> onArrive;
-    int i;
+    public final Tile dst;
+    public final PointF dir;
+    public final int max;
+    public final Consumer<Tile> onChange;
+    public final Consumer<Tile> onArrive;
+    public int i;
 
     public Context(Tile dst, PointF dir, int max, Consumer<Tile> onChange, Consumer<Tile> onArrive) {
         this.dst = dst;

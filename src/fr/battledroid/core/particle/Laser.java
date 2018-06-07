@@ -1,7 +1,7 @@
 package fr.battledroid.core.particle;
 
-import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.Canvas;
+import fr.battledroid.core.player.Player;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.utils.Points;
@@ -25,18 +25,8 @@ public final class Laser implements Particle {
     }
 
     @Override
-    public boolean shouldDraw(PointF offset, Point canvasSize) {
-        return false;
-    }
-
-    @Override
-    public void drawMap(Canvas canvas, PointF offset) {
+    public void draw(Canvas canvas, PointF offset) {
         canvas.drawCircle(screen.x + 100 + offset.x, screen.y + 200 + offset.y, 30, null);
-    }
-
-    @Override
-    public void drawMiniMap(Canvas canvas, PointF cellSize) {
-
     }
 
     @Override
@@ -58,7 +48,12 @@ public final class Laser implements Particle {
     }
 
     @Override
-    public boolean hasCollide(Asset src, Asset dst) {
-        return false;
+    public boolean hasCollide(Player dst) {
+        return true;
+    }
+
+    @Override
+    public void onCollide(Player dst) {
+        dst.takeDamage(20);
     }
 }

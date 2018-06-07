@@ -55,7 +55,7 @@ public final class Points {
     public static PointF center(Tile tile) {
         Settings s = Settings.instance();
         PointF center = new PointF();
-        PointF current = tile.screen();
+        PointF current = isoToScreen(tile.iso());
 
         center.x = (s.screenWidth / 2) - (current.x + s.tileWidth / 2);
         center.y = (s.screenHeight / 2) - (current.y + s.tileHeight / 2);

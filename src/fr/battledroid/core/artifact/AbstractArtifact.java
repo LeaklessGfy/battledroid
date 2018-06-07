@@ -1,10 +1,10 @@
 package fr.battledroid.core.artifact;
 
-import fr.battledroid.core.AbstractAsset;
 import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.adapter.AssetWrapper;
 import fr.battledroid.core.player.Player;
 
-abstract class AbstractArtifact extends AbstractAsset implements Artifact {
+abstract class AbstractArtifact extends AssetWrapper implements Artifact {
     private static final int DEFAULT_FIELD = 1;
     private final int field;
 

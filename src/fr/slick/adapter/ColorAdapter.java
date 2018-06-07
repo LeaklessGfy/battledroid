@@ -5,7 +5,7 @@ import org.newdawn.slick.Color;
 
 import java.util.Objects;
 
-public final class ColorAdapter implements AssetColor<Color> {
+public final class ColorAdapter implements AssetColor {
     private final Color color;
 
     public ColorAdapter(org.newdawn.slick.Color color) {

@@ -1,5 +1,6 @@
 package fr.swing.adapter;
 
+import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.utils.Point;
@@ -53,6 +54,11 @@ public final class CanvasAdapter implements Canvas<Graphics2D> {
 
     @Override
     public void drawColor(AssetColor color) {
+
+    }
+
+    @Override
+    public void drawAsset(Asset asset, float x, float y) {
 
     }
 }

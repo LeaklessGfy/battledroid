@@ -1,5 +1,5 @@
 package fr.battledroid.core.adaptee;
 
-public interface AssetColor<T> {
-    T get();
+public interface AssetColor {
+    Object get();
 }

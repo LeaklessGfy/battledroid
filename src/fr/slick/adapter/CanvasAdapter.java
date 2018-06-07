@@ -1,10 +1,12 @@
 package fr.slick.adapter;
 
+import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.utils.Point;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Circle;
 
 public final class CanvasAdapter implements Canvas<Graphics> {
@@ -59,5 +61,10 @@ public final class CanvasAdapter implements Canvas<Graphics> {
     @Override
     public void drawColor(AssetColor color) {
         g.setBackground((Color) color.get());
+    }
+
+    @Override
+    public void drawAsset(Asset asset, float x, float y) {
+        g.drawImage((Image) asset.get(), x, y);
     }
 }

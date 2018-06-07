@@ -12,21 +12,20 @@ import fr.battledroid.core.utils.Points;
 import fr.battledroid.core.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 final class MapImpl implements Map {
-    private final Tile[][] backgrounds;
-    private final Tile[][] overlays;
+    private final Tile[][] tiles;
     private final ArrayList<Particle> particles;
     private final Settings settings;
     private final PathFinder pathFinder;
 
-    MapImpl(Tile[][] backgrounds, Tile[][] overlays, Settings settings) {
-        this.backgrounds = Utils.requireNonNull(backgrounds);
-        this.overlays = Utils.requireNonNull(overlays);
-        this.settings = Utils.requireNonNull(settings);
+    MapImpl(Tile[][] tiles) {
+        this.tiles = Utils.requireNonNull(tiles);
+        this.settings = Settings.instance();
         this.particles = new ArrayList<>();
         this.pathFinder = new AStarFinder(this, settings.mapSize / 2, true);
     }
@@ -38,17 +37,8 @@ final class MapImpl implements Map {
 
     @Override
     public boolean isBusy(int x, int y) {
-        Tile b = backgrounds[x][y];
-        Tile o = overlays[x][y];
-
-        if (b == null || b.isBusy()) {
-            return true;
-        }
-        if (o != null && o.isBusy()) {
-            return true;
-        }
-
-        return false;
+        Tile b = tiles[x][y];
+        return b.isBusy();
     }
 
     @Override
@@ -57,37 +47,35 @@ final class MapImpl implements Map {
     }
 
     @Override
-    public boolean shouldDraw(PointF offset, Point canvasSize) {
-        return true;
+    public Tile tile(Point point) {
+        return tiles[point.x][point.y];
     }
 
     @Override
-    public void drawMap(Canvas canvas, PointF offset) {
+    public Tile screenToTile(double x, double y) {
+        Point point = Points.screenToIso(x, y);
+        return tiles[point.x][point.y];
+    }
+
+    @Override
+    public List<Particle> particles() {
+        return Collections.unmodifiableList(particles);
+    }
+
+    @Override
+    public void draw(Canvas canvas, PointF offset) {
         for (int y = 0; y < settings.mapSize; y++) {
             for (int x = 0; x < settings.mapSize; x++) {
-                if (backgrounds[x][y] != null) {
-                    backgrounds[x][y].drawMap(canvas, offset);
-                }
+                tiles[x][y].drawBackground(canvas, offset);
             }
         }
         for (int y = 0; y < settings.mapSize; y++) {
             for (int x = 0; x < settings.mapSize; x++) {
-                if (overlays[x][y] != null) {
-                    overlays[x][y].drawMap(canvas, offset);
-                }
+                tiles[x][y].drawOverlay(canvas, offset);
             }
         }
         for (Particle particle : particles) {
-            particle.drawMap(canvas, offset);
-        }
-    }
-
-    @Override
-    public void drawMiniMap(Canvas canvas, PointF cellSize) {
-        for (int y = 0; y < settings.mapSize; y++) {
-            for (int x = 0; x < settings.mapSize; x++) {
-                backgrounds[x][y].drawMiniMap(canvas, cellSize);
-            }
+            particle.draw(canvas, offset);
         }
     }
 
@@ -95,9 +83,7 @@ final class MapImpl implements Map {
     public void tick() {
         for (int y = 0; y < settings.mapSize; y++) {
             for (int x = 0; x < settings.mapSize; x++) {
-                if (overlays[x][y] != null) {
-                    overlays[x][y].tick();
-                }
+                tiles[x][y].tick();
             }
         }
         Iterator<Particle> it = particles.iterator();
@@ -124,7 +110,7 @@ final class MapImpl implements Map {
     public List<Tile> findPath(Point src, Point dst) {
         return pathFinder.findPath(src, dst, false)
                 .stream()
-                .map(p -> overlays[p.x][p.y])
+                .map(p -> tiles[p.x][p.y])
                 .collect(Collectors.toList());
     }
 
@@ -132,29 +118,13 @@ final class MapImpl implements Map {
     public List<Tile> findNearestPath(Point src, Point dst) {
         return pathFinder.findPath(src, dst, true)
                 .stream()
-                .map(p -> overlays[p.x][p.y])
+                .map(p -> tiles[p.x][p.y])
                 .collect(Collectors.toList());
     }
 
     @Override
     public boolean valid(Point point) {
         return point.x >= 0 && point.x < size() && point.y >= 0 && point.y < size();
-    }
-
-    @Override
-    public Tile background(Point point) {
-        return backgrounds[point.x][point.y];
-    }
-
-    @Override
-    public Tile overlay(Point point) {
-        return overlays[point.x][point.y];
-    }
-
-    @Override
-    public Tile screenToTile(double x, double y) {
-        Point point = Points.screenToIso(x, y);
-        return backgrounds[point.x][point.y];
     }
 
     @Override

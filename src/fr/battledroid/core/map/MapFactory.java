@@ -10,14 +10,13 @@ public final class MapFactory {
     public static Map createRandom(AssetFactory factory) {
         Settings settings = Settings.instance();
         int s = settings.mapSize;
+        Tile[][] tiles = new Tile[s][s];
 
         NoiseGenerator backgroundG = new NoiseGenerator(settings.octaves, settings.roughness, settings.scale);
         double[][] bNoises = backgroundG.generate(s, s, settings.seed);
-        Tile[][] backgrounds = new Tile[s][s];
 
         NoiseGenerator overlayG = new NoiseGenerator(settings.octaves * 2, 1,  settings.scale - 0.0001);
         double[][] oNoises = overlayG.generate(s, s, settings.seed);
-        Tile[][] overlays = new Tile[s][s];
 
         for (int x = 0; x < s; x++) {
             for (int y = 0; y < s; y++) {
@@ -50,11 +49,10 @@ public final class MapFactory {
                     overlay = null;
                 }
 
-                backgrounds[x][y] = new Tile(x, y, background);
-                overlays[x][y] = new Tile(x, y, overlay);
+                tiles[x][y] = new Tile(x, y, background, overlay);
             }
         }
 
-        return new MapImpl(backgrounds, overlays, settings);
+        return new MapImpl(tiles);
     }
 }

@@ -4,6 +4,10 @@ import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.adaptee.Canvas;
+import fr.battledroid.core.map.tile.Tile;
+import fr.battledroid.core.utils.HitBox;
+import fr.battledroid.core.utils.Point;
+import fr.battledroid.core.utils.PointF;
 import org.newdawn.slick.Image;
 
 import java.util.Objects;
@@ -14,6 +18,8 @@ public final class AssetAdapter implements Asset {
     private final int height;
     private final int alphaWidth;
     private final int alphaHeight;
+
+    private Tile tile;
 
     private AssetAdapter(Image img, int width, int height, int alphaWidth, int alphaHeight) {
         this.img = img;
@@ -89,12 +95,38 @@ public final class AssetAdapter implements Asset {
     }
 
     @Override
-    public void draw(Canvas canvas, float x, float y) {
-        img.draw(x, y);
+    public boolean shouldDraw(PointF screen, PointF offset, Point canvasSize) {
+        double x = screen.x + offset.x;
+        double y = screen.y + offset.y;
+
+        return x >= 0 - getWidth() && x <= canvasSize.x && y >= 0 - getHeight() && y <= canvasSize.y;
     }
 
     @Override
-    public void tick() {
+    public void draw(Canvas canvas, PointF screen, PointF offset) {
+        canvas.drawAsset(this, screen.x + offset.x, screen.y + offset.y);
+    }
 
+    @Override
+    public void tick() {}
+
+    @Override
+    public HitBox hitBox(PointF screen) {
+        return new HitBox(screen.x, screen.y, getWidth(), getHeight());
+    }
+
+    @Override
+    public Tile getCurrent() {
+        return tile;
+    }
+
+    @Override
+    public void setCurrent(Tile tile) {
+        this.tile = tile;
+    }
+
+    @Override
+    public Object get() {
+        return img;
     }
 }

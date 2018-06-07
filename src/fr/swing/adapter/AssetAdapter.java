@@ -4,6 +4,10 @@ import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.adaptee.Canvas;
+import fr.battledroid.core.map.tile.Tile;
+import fr.battledroid.core.utils.HitBox;
+import fr.battledroid.core.utils.Point;
+import fr.battledroid.core.utils.PointF;
 
 import java.awt.*;
 import java.util.Objects;
@@ -88,13 +92,36 @@ public final class AssetAdapter implements Asset {
     }
 
     @Override
-    public void draw(Canvas canvas, float x, float y) {
-        Graphics g = (Graphics) canvas.get();
-        g.drawImage(img, (int) x, (int) y, null);
+    public boolean shouldDraw(PointF screen, PointF offset, Point canvasSize) {
+        return false;
     }
 
     @Override
-    public void tick() {
+    public void draw(Canvas canvas, PointF screen, PointF offset) {
+        Graphics g = (Graphics) canvas.get();
+        g.drawImage(img, (int) (screen.x + offset.x), (int) (screen.y + offset.y), null);
+    }
 
+    @Override
+    public void tick() {}
+
+    @Override
+    public HitBox hitBox(PointF screen) {
+        return null;
+    }
+
+    @Override
+    public Tile getCurrent() {
+        return null;
+    }
+
+    @Override
+    public void setCurrent(Tile tile) {
+
+    }
+
+    @Override
+    public Object get() {
+        return img;
     }
 }

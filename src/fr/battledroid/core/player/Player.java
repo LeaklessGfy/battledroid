@@ -1,5 +1,6 @@
 package fr.battledroid.core.player;
 
+import fr.battledroid.core.Collider;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.particle.Particle;
@@ -10,7 +11,7 @@ import fr.battledroid.core.utils.Point;
 
 import java.util.List;
 
-public interface Player extends Asset {
+public interface Player extends Asset, Collider<Player> {
     double health();
     int defense();
     Weapon weapon();
@@ -19,14 +20,12 @@ public interface Player extends Asset {
     int maxDefense();
     Inventory inventory();
     State state();
-    Tile current();
     Tile last();
 
     void addHealth(double health);
     void addDefense(int defense);
     void addSpeed(int speed);
     void addItem(Item item);
-    void setCurrent(Tile tile);
 
     void useItem(Item item);
     void takeDamage(int damage);

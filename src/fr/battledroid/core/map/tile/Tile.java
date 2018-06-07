@@ -1,58 +1,48 @@
 package fr.battledroid.core.map.tile;
 
-import fr.battledroid.core.Drawable;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.utils.Points;
+import fr.battledroid.core.utils.Utils;
 
-public final class Tile implements Drawable {
+public final class Tile {
     private final Point iso;
     private final PointF screen;
 
-    private Context ctx;
-    private Asset asset;
+    private Asset background;
+    private Asset overlay;
 
-    public Tile(int x, int y, Asset asset) {
+    public Tile(int x, int y, Asset background, Asset overlay) {
         this.iso = new Point(x, y);
         this.screen = Points.isoToScreen(iso);
-        this.asset = asset;
+        this.background = Utils.requireNonNull(background);
+        this.overlay = overlay;
+        insureValidity();
     }
 
-    @Override
-    public boolean shouldDraw(PointF offset, Point canvasSize) {
-        if (asset == null) {
-            return false;
+    public void drawBackground(Canvas canvas, PointF offset) {
+        if (background.shouldDraw(screen, offset, canvas.getSize())) {
+            background.draw(canvas, screen, offset);
         }
-        double x = screen.x + offset.x;
-        double y = screen.y + offset.y;
-
-        return x >= 0 - asset.getWidth() && x <= canvasSize.x && y >= 0 - asset.getHeight() && y <= canvasSize.y;
     }
 
-    @Override
-    public void drawMap(Canvas canvas, PointF offset) {
-        if (asset == null || !shouldDraw(offset, canvas.getSize())) {
-            return;
+    public void drawOverlay(Canvas canvas, PointF offset) {
+        if (overlay != null && overlay.shouldDraw(screen, offset, canvas.getSize())) {
+            overlay.draw(canvas, screen, offset);
         }
-        asset.draw(canvas, screen.x + offset.x, screen.y + offset.y);
     }
 
-    @Override
     public void drawMiniMap(Canvas canvas, PointF cellSize) {
-        if (asset == null) {
-            return;
-        }
         float xOffset = (iso.x * cellSize.x) + 5;
         float yOffset = (iso.y * cellSize.y) + 5;
-        canvas.drawRect(xOffset, yOffset, xOffset + cellSize.x, yOffset + cellSize.y, asset.getColor());
+        canvas.drawRect(xOffset, yOffset, xOffset + cellSize.x, yOffset + cellSize.y, background.getColor());
     }
 
-    @Override
     public void tick() {
-        if (asset != null) {
-            asset.tick();
+        if (overlay != null) {
+            overlay.tick();
         }
     }
 
@@ -60,57 +50,33 @@ public final class Tile implements Drawable {
         return new Point(iso);
     }
 
-    public PointF screen() {
-        return new PointF(screen);
-    }
-
-    private void translate(PointF screen, Context ctx, Asset asset) {
-        synchronized (iso) {
-            this.screen.set(screen);
-            this.ctx = ctx;
-            this.ctx.i++;
-            this.asset = asset;
-        }
-    }
-
-    public void nextStep() {
-        synchronized (iso) {
-            if (ctx.i == ctx.max / 2) {
-                ctx.dst.translate(screen, ctx, asset);
-                ctx.onChange.accept(ctx.dst);
-                ctx = null;
-                asset = null;
-            } else if (ctx.i > ctx.max) {
-                ctx.onArrive.accept(this);
-                ctx = null;
-            } else {
-                screen.set(Points.step(screen, ctx.dir, ctx.max));
-                ctx.i++;
-            }
-        }
-    }
-
-    public void move(Context context) {
-        synchronized (iso) {
-            this.ctx = context;
-        }
-    }
-
     public boolean isBusy() {
-        return asset != null && asset.isObstacle();
+        return overlay != null && overlay.isObstacle();
     }
 
-    public void setAsset(Asset asset) {
-        this.asset = asset;
+    public void setBackground(Asset background) {
+        this.background = Utils.requireNonNull(background);
+        insureValidity();
+    }
+
+    public void setOverlay(Asset overlay) {
+        this.overlay = overlay;
+        insureValidity();
+    }
+
+    private void insureValidity() {
+        background.setCurrent(this);
+        if (overlay != null) {
+            overlay.setCurrent(this);
+        }
     }
 
     @Override
     public String toString() {
         return "Tile{" +
                 "iso=" + iso +
-                ", screen=" + screen +
-                ", ctx=" + ctx +
-                ", asset=" + asset +
+                ", background=" + background +
+                ", overlay=" + overlay +
                 '}';
     }
 }

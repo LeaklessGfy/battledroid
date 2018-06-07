@@ -5,22 +5,18 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import fr.battledroid.core.adaptee.AssetColor;
+import fr.battledroid.core.adapter.AssetWrapper;
 import fr.battledroid.core.map.tile.Context;
-import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.player.item.Weapon;
-import fr.battledroid.core.utils.Point;
-import fr.battledroid.core.utils.PointF;
-import fr.battledroid.core.utils.Points;
-import fr.battledroid.core.utils.Utils;
+import fr.battledroid.core.utils.*;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.player.item.Inventory;
 import fr.battledroid.core.player.item.Item;
 
-abstract class AbstractPlayer implements Player {
+abstract class AbstractPlayer extends AssetWrapper implements Player {
     private final String uuid;
     private final Asset asset;
     private final Weapon weapon;
@@ -32,8 +28,10 @@ abstract class AbstractPlayer implements Player {
     private final Consumer<Tile> onArrive;
     private final boolean cpu;
 
-    private Tile current;
+    private final PointF screen;
+    private Context ctx;
     private Tile last;
+
     private double health;
     private double maxHealth;
     private int defense;
@@ -43,6 +41,7 @@ abstract class AbstractPlayer implements Player {
     private State state;
 
     AbstractPlayer(Builder builder) {
+        super(builder.img);
         this.uuid = UUID.randomUUID().toString();
         this.asset = builder.img;
         this.weapon = builder.weapon;
@@ -54,7 +53,7 @@ abstract class AbstractPlayer implements Player {
             @Override
             public void accept(Tile val) {
                 synchronized (moves) {
-                    current = val;
+                    setCurrent(val);
                 }
             }
         };
@@ -67,6 +66,7 @@ abstract class AbstractPlayer implements Player {
             }
         };
         this.cpu = builder.cpu;
+        this.screen = new PointF();
         this.health = builder.health;
         this.maxHealth = builder.maxHealth;
         this.defense = builder.defense;
@@ -119,13 +119,6 @@ abstract class AbstractPlayer implements Player {
     }
 
     @Override
-    public Tile current() {
-        synchronized (moves) {
-            return current;
-        }
-    }
-
-    @Override
     public Tile last() {
         synchronized (moves) {
             return last;
@@ -172,12 +165,6 @@ abstract class AbstractPlayer implements Player {
     }
 
     @Override
-    public void setCurrent(Tile position) {
-        this.current = position;
-        this.last = last == null ? current : last;
-    }
-
-    @Override
     public void useItem(Item item) {
         inventory.remove(Utils.requireNonNull(item));
     }
@@ -210,7 +197,7 @@ abstract class AbstractPlayer implements Player {
 
     @Override
     public Particle shoot(Point offset) {
-        return weapon.shoot(current.iso().clone(), current.screen().clone(), offset);
+        return weapon.shoot(getCurrent().iso().clone(), screen.clone(), offset);
     }
 
     @Override
@@ -239,41 +226,6 @@ abstract class AbstractPlayer implements Player {
     }
 
     @Override
-    public int getWidth() {
-        return asset.getWidth();
-    }
-
-    @Override
-    public int getHeight() {
-        return asset.getHeight();
-    }
-
-    @Override
-    public int getAlphaWidth() {
-        return asset.getAlphaWidth();
-    }
-
-    @Override
-    public int getAlphaHeight() {
-        return asset.getAlphaHeight();
-    }
-
-    @Override
-    public boolean isObstacle() {
-        return true;
-    }
-
-    @Override
-    public AssetColor getColor() {
-        return asset.getColor();
-    }
-
-    @Override
-    public void draw(Canvas canvas, float x, float y) {
-        asset.draw(canvas, x, y);
-    }
-
-    @Override
     public void tick() {
         synchronized (moves) {
             switch (state) {
@@ -281,10 +233,35 @@ abstract class AbstractPlayer implements Player {
                     nextMove();
                     break;
                 case MOVING:
-                    current.nextStep();
+                    nextStep();
                     break;
             }
         }
+    }
+
+    @Override
+    public Tile getCurrent() {
+        synchronized (moves) {
+            return asset.getCurrent();
+        }
+    }
+
+    @Override
+    public void setCurrent(Tile position) {
+        synchronized (moves) {
+            asset.setCurrent(position);
+            this.last = last == null ? position : last;
+        }
+    }
+
+    @Override
+    public boolean hasCollide(Player player) {
+        return false;
+    }
+
+    @Override
+    public void onCollide(Player player) {
+
     }
 
     private void nextMove() {
@@ -293,9 +270,22 @@ abstract class AbstractPlayer implements Player {
             return;
         }
         state = State.MOVING;
-        PointF dir = Points.movement(current.iso(), dst.iso());
-        Context ctx = new Context(dst, dir, speed, onChange, onArrive);
-        current.move(ctx);
+        PointF dir = Points.movement(getCurrent().iso(), dst.iso());
+        ctx = new Context(dst, dir, speed, onChange, onArrive);
+    }
+
+    private void nextStep() {
+        if (ctx.i == ctx.max / 2) {
+            ctx.dst.setOverlay(this);
+            getCurrent().setOverlay(null);
+            onChange.accept(ctx.dst);
+        } else if (ctx.i > ctx.max) {
+            onArrive.accept(ctx.dst);
+            ctx = null;
+        } else {
+            screen.set(Points.step(screen, ctx.dir, ctx.max));
+            ctx.i++;
+        }
     }
 
     @Override

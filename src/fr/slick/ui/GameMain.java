@@ -14,6 +14,8 @@ import fr.battledroid.core.map.MapFactory;
 import fr.battledroid.core.player.Droid;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.player.PlayerFactory;
+import fr.battledroid.core.player.PlayerObserver;
+import fr.battledroid.core.player.item.Item;
 import fr.slick.adapter.CanvasAdapter;
 import fr.slick.adapter.ColorAdapter;
 import fr.slick.adapter.SlickSpriteFactory;
@@ -52,7 +54,7 @@ public final class GameMain extends BasicGame {
             app.setVSync(true); // false for disable the FPS synchronize
             app.start();
         } catch (SlickException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -68,6 +70,27 @@ public final class GameMain extends BasicGame {
 
         Map map = MapFactory.createRandom(factory);
         Player player = PlayerFactory.createDroid(factory);
+        player.attach(new PlayerObserver() {
+            @Override
+            public void updateHealth(double health) {
+                System.out.println("New health " + health);
+            }
+
+            @Override
+            public void updateDefense(int defense) {
+
+            }
+
+            @Override
+            public void updateSpeed(int speed) {
+
+            }
+
+            @Override
+            public void updateItem(Item item, boolean isNewItem) {
+
+            }
+        });
 
         Engine engine = EngineFactory.create(map, new ColorAdapter(Color.black));
         engine.addPlayer(player);
