@@ -12,4 +12,14 @@ public final class HitBox {
         this.width = width;
         this.height = height;
     }
+
+    @Override
+    public String toString() {
+        return "HitBox{" +
+                "x=" + x +
+                ", y=" + y +
+                ", width=" + width +
+                ", height=" + height +
+                '}';
+    }
 }

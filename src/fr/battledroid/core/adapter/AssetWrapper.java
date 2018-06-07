@@ -52,8 +52,8 @@ public class AssetWrapper implements Asset {
     }
 
     @Override
-    public HitBox hitBox(PointF screen) {
-        return asset.hitBox(screen);
+    public HitBox hitBox() {
+        return asset.hitBox();
     }
 
     @Override

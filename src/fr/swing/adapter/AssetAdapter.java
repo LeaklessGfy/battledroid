@@ -106,7 +106,7 @@ public final class AssetAdapter implements Asset {
     public void tick() {}
 
     @Override
-    public HitBox hitBox(PointF screen) {
+    public HitBox hitBox() {
         return null;
     }
 

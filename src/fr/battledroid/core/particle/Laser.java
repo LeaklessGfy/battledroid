@@ -2,9 +2,7 @@ package fr.battledroid.core.particle;
 
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.player.Player;
-import fr.battledroid.core.utils.Point;
-import fr.battledroid.core.utils.PointF;
-import fr.battledroid.core.utils.Points;
+import fr.battledroid.core.utils.*;
 
 public final class Laser implements Particle {
     private final Point iso;
@@ -12,16 +10,18 @@ public final class Laser implements Particle {
     private final Point offset;
     private final Point dst;
     private final PointF dir;
+    private final Player owner;
 
     private int i = 0;
     private int speed = 20;
 
-    public Laser(Point iso, PointF screen, Point offset) {
-        this.iso = iso;
-        this.screen = screen == null ? Points.isoToScreen(iso) : screen;
-        this.offset = offset;
+    public Laser(Point iso, PointF screen, Point offset, Player owner) {
+        this.iso = Utils.requireNonNull(iso);
+        this.screen = Utils.requireNonNull(screen);
+        this.offset = Utils.requireNonNull(offset);
         this.dst = iso.clone().offset(offset);
         this.dir = Points.movement(iso, dst);
+        this.owner = Utils.requireNonNull(owner);
     }
 
     @Override
@@ -49,11 +49,20 @@ public final class Laser implements Particle {
 
     @Override
     public boolean hasCollide(Player dst) {
-        return true;
+        HitBox hitBox = dst.hitBox();
+
+        if (hitBox.x < screen.x + 30 && hitBox.x + hitBox.width > screen.x
+                && hitBox.y < screen.y + 30 && hitBox.y + hitBox.height > screen.y) {
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     public void onCollide(Player dst) {
-        dst.takeDamage(20);
+        if (!dst.equals(owner)) {
+            dst.takeDamage(20);
+        }
     }
 }

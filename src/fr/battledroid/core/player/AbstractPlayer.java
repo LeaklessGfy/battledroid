@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adapter.AssetWrapper;
 import fr.battledroid.core.map.tile.Context;
 import fr.battledroid.core.function.Consumer;
@@ -18,17 +19,14 @@ import fr.battledroid.core.player.item.Item;
 
 abstract class AbstractPlayer extends AssetWrapper implements Player {
     private final String uuid;
-    private final Asset asset;
     private final Weapon weapon;
     private final Item shield;
     private final Inventory inventory;
     private final ArrayList<PlayerObserver> observers;
     private final LinkedBlockingDeque<Tile> moves;
-    private final Consumer<Tile> onChange;
-    private final Consumer<Tile> onArrive;
     private final boolean cpu;
 
-    private final PointF screen;
+    private PointF screen;
     private Context ctx;
     private Tile last;
 
@@ -43,30 +41,12 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     AbstractPlayer(Builder builder) {
         super(builder.img);
         this.uuid = UUID.randomUUID().toString();
-        this.asset = builder.img;
         this.weapon = builder.weapon;
         this.shield = builder.shield;
         this.inventory = builder.inventory;
         this.observers = builder.observers;
         this.moves = new LinkedBlockingDeque<>();
-        this.onChange = new Consumer<Tile>() {
-            @Override
-            public void accept(Tile val) {
-                synchronized (moves) {
-                    setCurrent(val);
-                }
-            }
-        };
-        this.onArrive = new Consumer<Tile>() {
-            @Override
-            public void accept(Tile val) {
-                synchronized (moves) {
-                    state = State.WAITING;
-                }
-            }
-        };
         this.cpu = builder.cpu;
-        this.screen = new PointF();
         this.health = builder.health;
         this.maxHealth = builder.maxHealth;
         this.defense = builder.defense;
@@ -184,20 +164,25 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
 
     @Override
     public void move(Tile tile) {
-        moves.offer(tile);
-        last = tile;
+        synchronized (moves) {
+            moves.offer(tile);
+            last = tile;
+        }
     }
 
     @Override
     public void move(List<Tile> path) {
-        for (Tile tile : path) {
-            moves.offer(tile);
+        synchronized (moves) {
+            for (Tile tile : path) {
+                moves.offer(tile);
+                last = tile;
+            }
         }
     }
 
     @Override
     public Particle shoot(Point offset) {
-        return weapon.shoot(getCurrent().iso().clone(), screen.clone(), offset);
+        return weapon.shoot(getCurrent().iso().clone(), screen.clone(), offset, this);
     }
 
     @Override
@@ -226,6 +211,14 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     }
 
     @Override
+    public void draw(Canvas canvas, PointF screen, PointF offset) {
+        if (state == State.MOVING) {
+            screen = this.screen;
+        }
+        super.draw(canvas, screen, offset);
+    }
+
+    @Override
     public void tick() {
         synchronized (moves) {
             switch (state) {
@@ -242,15 +235,16 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     @Override
     public Tile getCurrent() {
         synchronized (moves) {
-            return asset.getCurrent();
+            return super.getCurrent();
         }
     }
 
     @Override
     public void setCurrent(Tile position) {
         synchronized (moves) {
-            asset.setCurrent(position);
+            super.setCurrent(position);
             this.last = last == null ? position : last;
+            this.screen = screen == null ? Points.isoToScreen(position.iso()) : screen;
         }
     }
 
@@ -270,17 +264,19 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
             return;
         }
         state = State.MOVING;
-        PointF dir = Points.movement(getCurrent().iso(), dst.iso());
-        ctx = new Context(dst, dir, speed, onChange, onArrive);
+        Tile src = getCurrent();
+        PointF dir = Points.movement(src.iso(), dst.iso());
+        ctx = new Context(dst, dir, speed);
+        screen.set(Points.isoToScreen(src.iso()));
     }
 
     private void nextStep() {
         if (ctx.i == ctx.max / 2) {
-            ctx.dst.setOverlay(this);
             getCurrent().setOverlay(null);
-            onChange.accept(ctx.dst);
+            ctx.dst.setOverlay(this);
+            ctx.i++;
         } else if (ctx.i > ctx.max) {
-            onArrive.accept(ctx.dst);
+            state = State.WAITING;
             ctx = null;
         } else {
             screen.set(Points.step(screen, ctx.dir, ctx.max));

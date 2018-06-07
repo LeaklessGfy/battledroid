@@ -46,6 +46,9 @@ public final class PointF {
 
     @Override
     public String toString() {
-        return x + ", " + y;
+        return "PointF{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }

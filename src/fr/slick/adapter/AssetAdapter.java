@@ -8,6 +8,7 @@ import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.utils.HitBox;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.PointF;
+import fr.battledroid.core.utils.Points;
 import org.newdawn.slick.Image;
 
 import java.util.Objects;
@@ -111,7 +112,8 @@ public final class AssetAdapter implements Asset {
     public void tick() {}
 
     @Override
-    public HitBox hitBox(PointF screen) {
+    public HitBox hitBox() {
+        PointF screen = Points.isoToScreen(tile.iso());
         return new HitBox(screen.x, screen.y, getWidth(), getHeight());
     }
 

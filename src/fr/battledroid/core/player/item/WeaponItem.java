@@ -20,7 +20,7 @@ public final class WeaponItem implements Item, Weapon {
     }
 
     @Override
-    public Particle shoot(Point iso, PointF screen, Point offset) {
-        return new Laser(iso, screen, offset);
+    public Particle shoot(Point iso, PointF screen, Point offset, Player owner) {
+        return new Laser(iso, screen, offset, owner);
     }
 }

@@ -37,7 +37,6 @@ final class EngineImpl implements Engine {
         Point p = spawner.spawn();
         Tile tile = map.tile(p);
         tile.setOverlay(player);
-        System.out.println(player.getCurrent());
     }
 
     @Override
