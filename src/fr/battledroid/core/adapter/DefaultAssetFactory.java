@@ -1,24 +1,23 @@
-package fr.swing.adapter;
+package fr.battledroid.core.adapter;
 
-import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.AssetFactory;
+import fr.battledroid.core.adaptee.SpriteFactory;
 import fr.battledroid.core.map.Biome;
-import fr.battledroid.core.player.Droid;
 import fr.battledroid.core.player.Player;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Objects;
 
-public final class AssetFactoryAdapter implements AssetFactory {
+public class DefaultAssetFactory implements AssetFactory {
     private final HashMap<Biome, Path> backgrounds;
     private final HashMap<Biome, Path> overlays;
     private final HashMap<Class<? extends Player>, Path> players;
     private final SpriteFactory spriteFactory;
 
-    private AssetFactoryAdapter(
+
+    private DefaultAssetFactory(
             HashMap<Biome, Path> backgrounds,
             HashMap<Biome, Path> overlays,
             HashMap<Class<? extends Player>, Path> players,
@@ -30,22 +29,27 @@ public final class AssetFactoryAdapter implements AssetFactory {
         this.spriteFactory = Objects.requireNonNull(spriteFactory);
     }
 
-    public static AssetFactoryAdapter create(SpriteFactory spriteFactory) {
-        String r = Settings.instance().resources;
+    public static AssetFactory create(SpriteFactory spriteFactory) {
         HashMap<Biome, Path> backgrounds = new HashMap<>();
-        backgrounds.put(Biome.SNOW, Paths.get(r + "/tiles/snow.png"));
-        backgrounds.put(Biome.GRASS, Paths.get(r + "/tiles/grass.png"));
-        backgrounds.put(Biome.DARK_GRASS, Paths.get(r + "/tiles/dark_grass.png"));
-        backgrounds.put(Biome.ROCK, Paths.get(r + "/tiles/rock.png"));
-        backgrounds.put(Biome.LIGHT_ROCK, Paths.get(r + "/tiles/light_rock.png"));
-        backgrounds.put(Biome.SAND, Paths.get(r + "/tiles/sand.png"));
-
         HashMap<Biome, Path> overlays = new HashMap<>();
-
         HashMap<Class<? extends Player>, Path> players = new HashMap<>();
-        players.put(Droid.class, Paths.get(r + "/players/droid.png"));
 
-        return new AssetFactoryAdapter(backgrounds, overlays, players, spriteFactory);
+        return new DefaultAssetFactory(backgrounds, overlays, players, spriteFactory);
+    }
+
+    @Override
+    public void registerBiome(Biome biome, Path path) {
+        backgrounds.put(Objects.requireNonNull(biome), Objects.requireNonNull(path));
+    }
+
+    @Override
+    public void registerObstacle(Biome biome, Path path) {
+        overlays.put(Objects.requireNonNull(biome), Objects.requireNonNull(path));
+    }
+
+    @Override
+    public void registerPlayer(Class<? extends Player> clazz, Path path) {
+        players.put(Objects.requireNonNull(clazz), Objects.requireNonNull(path));
     }
 
     @Override

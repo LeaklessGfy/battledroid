@@ -79,39 +79,35 @@ public final class Settings {
         this.seed = b.seed;
     }
 
-    private Settings() {
-        this(new Builder());
-    }
-
     public static Settings instance() {
         if (settings == null) {
-            settings = new Settings();
+            throw new IllegalStateException("Settings has not been built");
         }
         return settings;
     }
 
     public static class Builder {
-        private int tileWidth;
-        private int tileHeight;
-        private int tileAlphaWidth;
-        private int tileAlphaHeight;
-        private int mapSize;
+        public int tileWidth;
+        public int tileHeight;
+        public int tileAlphaWidth;
+        public int tileAlphaHeight;
+        public int mapSize;
 
-        private int screenWidth;
-        private int screenHeight;
+        public int screenWidth;
+        public int screenHeight;
 
-        private String resources;
-        private String theme;
+        public String resources;
+        public String theme;
 
-        private int octaves;
-        private double roughness;
-        private double scale;
+        public int octaves;
+        public double roughness;
+        public double scale;
 
-        private int shrinkTimeout;
-        private int shrinkRadius;
+        public int shrinkTimeout;
+        public int shrinkRadius;
 
-        private int behaviourTimeout;
-        private int seed;
+        public int behaviourTimeout;
+        public int seed;
 
         public Builder() {
             tileWidth = DEFAULT_TILE_WIDTH;
@@ -135,6 +131,21 @@ public final class Settings {
 
             behaviourTimeout = DEFAULT_BEHAVIOUR_TIMEOUT;
             seed = RandomGenerator.randomInt(0, Integer.MAX_VALUE - 1);
+        }
+
+        public Settings build() {
+            settings = new Settings(this);
+            return settings;
+        }
+
+        public Builder setScreenWidth(int width) {
+            this.screenWidth = width;
+            return this;
+        }
+
+        public Builder setScreenHeight(int height) {
+            this.screenHeight = height;
+            return this;
         }
     }
 }

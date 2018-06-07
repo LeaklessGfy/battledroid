@@ -2,13 +2,14 @@ package fr.battledroid.core.adaptee;
 
 import fr.battledroid.core.utils.Point;
 
-public interface Canvas {
+public interface Canvas<T> {
+    Canvas wrap(T t);
     int getWidth();
     int getHeight();
     Point getSize();
+    T get();
 
-    <T> T get();
-
-    void drawRect(float x, float y, float width, float height, Color color);
-    void drawCircle(float x, float y, float radius, Color color);
+    void drawRect(float x, float y, float width, float height, AssetColor color);
+    void drawCircle(float x, float y, float radius, AssetColor color);
+    void drawColor(AssetColor color);
 }

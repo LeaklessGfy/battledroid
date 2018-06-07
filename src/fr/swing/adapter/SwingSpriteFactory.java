@@ -1,19 +1,23 @@
 package fr.swing.adapter;
 
+import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.adaptee.SpriteFactory;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.WeakHashMap;
 
-public final class SpriteFactory {
+public final class SwingSpriteFactory implements SpriteFactory {
     private final WeakHashMap<Path, Image> lazy;
 
-    public SpriteFactory() {
+    public SwingSpriteFactory() {
         this.lazy = new WeakHashMap<>();
     }
 
-    public AssetAdapter get(Path path) {
+    @Override
+    public Asset get(Path path) {
         Image img = lazyLoad(path);
         return AssetAdapter.create(img);
     }

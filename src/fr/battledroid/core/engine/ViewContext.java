@@ -19,6 +19,10 @@ public final class ViewContext {
         this.offset.set(Points.center(player.current()));
     }
 
+    public void tick() {
+        engine.tick();
+    }
+
     public void offset(double dX, double dY) {
         if (dX == 0 || dY == 0) {
             return;

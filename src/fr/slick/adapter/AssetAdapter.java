@@ -1,15 +1,15 @@
-package fr.swing.adapter;
+package fr.slick.adapter;
 
 import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.adaptee.Canvas;
+import org.newdawn.slick.Image;
 
-import java.awt.*;
 import java.util.Objects;
 
 public final class AssetAdapter implements Asset {
-    private final java.awt.Image img;
+    private final Image img;
     private final int width;
     private final int height;
     private final int alphaWidth;
@@ -24,8 +24,9 @@ public final class AssetAdapter implements Asset {
     }
 
     public static AssetAdapter create(Image img) {
+        Objects.requireNonNull(img);
         Settings settings = Settings.instance();
-        Image scaled = Objects.requireNonNull(img).getScaledInstance(settings.tileWidth, settings.tileHeight, java.awt.Image.SCALE_DEFAULT);
+        Image scaled = img.getScaledCopy(settings.tileWidth, settings.tileHeight);
         int width = settings.tileWidth;
         int height = settings.tileHeight;
         int alphaWidth = settings.tileAlphaWidth;
@@ -89,8 +90,7 @@ public final class AssetAdapter implements Asset {
 
     @Override
     public void draw(Canvas canvas, float x, float y) {
-        Graphics g = (Graphics) canvas.get();
-        g.drawImage(img, (int) x, (int) y, null);
+        img.draw(x, y);
     }
 
     @Override

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import fr.battledroid.core.adaptee.Color;
+import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.map.tile.Context;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.function.Consumer;
@@ -256,7 +256,7 @@ abstract class AbstractPlayer implements Player {
     }
 
     @Override
-    public Color getColor() {
+    public AssetColor getColor() {
         return asset.getColor();
     }
 

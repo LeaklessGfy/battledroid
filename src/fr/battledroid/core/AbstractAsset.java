@@ -1,8 +1,8 @@
 package fr.battledroid.core;
 
 import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.adaptee.Canvas;
-import fr.battledroid.core.adaptee.Color;
 import fr.battledroid.core.utils.Utils;
 
 public abstract class AbstractAsset implements Asset {
@@ -38,7 +38,7 @@ public abstract class AbstractAsset implements Asset {
     }
 
     @Override
-    public Color getColor() {
+    public AssetColor getColor() {
         return asset.getColor();
     }
 

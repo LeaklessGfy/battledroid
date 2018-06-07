@@ -5,7 +5,7 @@ import fr.battledroid.core.particle.Laser;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.Utils;
 import fr.battledroid.core.adaptee.Canvas;
-import fr.battledroid.core.adaptee.Color;
+import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.player.Player;
@@ -16,14 +16,14 @@ import java.util.List;
 
 final class EngineImpl implements Engine {
     private final Map map;
-    private final Color background;
+    private final AssetColor background;
     private final HashSet<Player> players;
     private final Spawn spawner;
 
     private Listener listener;
     private AIMoveBehaviour behaviour;
 
-    EngineImpl(Map map, Color background) {
+    EngineImpl(Map map, AssetColor background) {
         this.map = Utils.requireNonNull(map);
         this.background = Utils.requireNonNull(background);
         this.players = new HashSet<>();
@@ -40,13 +40,13 @@ final class EngineImpl implements Engine {
 
     @Override
     public void drawMap(Canvas canvas, PointF offset) {
-        background.draw(canvas);
+        canvas.drawColor(background);
         map.drawMap(canvas, offset);
     }
 
     @Override
     public void drawMiniMap(Canvas canvas) {
-        background.draw(canvas);
+        canvas.drawColor(background);
         PointF cellSize = new PointF(canvas.getWidth() / map.size(), canvas.getHeight() / map.size());
         map.drawMiniMap(canvas, cellSize);
     }

@@ -1,6 +1,7 @@
+import fr.battledroid.core.adaptee.AssetFactory;
+import fr.battledroid.core.adapter.DefaultAssetFactory;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.player.PlayerFactory;
-import fr.swing.adapter.AssetFactoryAdapter;
 import fr.swing.adapter.CanvasAdapter;
 import fr.swing.adapter.ColorAdapter;
 import fr.battledroid.core.engine.Engine;
@@ -8,11 +9,9 @@ import fr.battledroid.core.engine.EngineFactory;
 import fr.battledroid.core.engine.ViewContext;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.map.MapFactory;
-import fr.swing.adapter.SpriteFactory;
-import fr.swing.ui.View;
+import fr.swing.adapter.SwingSpriteFactory;
 import fr.swing.ui.Window;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -21,8 +20,8 @@ import java.awt.image.BufferedImage;
 
 public class Main {
     public static void main(String[] args) {
-        SpriteFactory spriteFactory = new SpriteFactory();
-        AssetFactoryAdapter assetFactory = AssetFactoryAdapter.create(spriteFactory);
+        SwingSpriteFactory spriteFactory = new SwingSpriteFactory();
+        AssetFactory assetFactory = DefaultAssetFactory.create(spriteFactory);
 
         Map map = MapFactory.createRandom(assetFactory);
         Player player = PlayerFactory.createDroid(assetFactory);
