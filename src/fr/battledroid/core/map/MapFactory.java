@@ -6,6 +6,8 @@ import fr.battledroid.core.adaptee.AssetFactory;
 import fr.battledroid.core.map.noise.NoiseGenerator;
 import fr.battledroid.core.map.tile.Tile;
 
+import java.util.Random;
+
 public final class MapFactory {
     public static Map createRandom(AssetFactory factory) {
         Settings settings = Settings.instance();
@@ -18,6 +20,8 @@ public final class MapFactory {
         NoiseGenerator overlayG = new NoiseGenerator(settings.octaves * 2, 1,  settings.scale - 0.0001);
         double[][] oNoises = overlayG.generate(s, s, settings.seed);
 
+        Random rand = new Random(settings.seed);
+
         for (int x = 0; x < s; x++) {
             for (int y = 0; y < s; y++) {
                 Asset background;
@@ -27,23 +31,23 @@ public final class MapFactory {
                 double o = oNoises[x][y];
 
                 if (b > Biome.SNOW.value()) {
-                    background = factory.getBiome(Biome.GRASS);
-                    overlay = factory.getRandomObstacle(Biome.SNOW, o);
+                    background = factory.getBiome(Biome.SNOW);
+                    overlay = random(rand, factory, Biome.SNOW, o);
                 } else if (b > Biome.GRASS.value()) {
                     background = factory.getBiome(Biome.GRASS);
-                    overlay = factory.getRandomObstacle(Biome.GRASS, o);
+                    overlay = random(rand, factory, Biome.GRASS, o);
                 } else if (b > Biome.DARK_GRASS.value()) {
                     background = factory.getBiome(Biome.DARK_GRASS);
-                    overlay = factory.getRandomObstacle(Biome.DARK_GRASS, o);
+                    overlay = random(rand, factory, Biome.DARK_GRASS, o);
                 } else if (b > Biome.ROCK.value()) {
                     background = factory.getBiome(Biome.ROCK);
-                    overlay = factory.getRandomObstacle(Biome.ROCK, o);
+                    overlay = random(rand, factory, Biome.ROCK, o);
                 } else if (b > Biome.LIGHT_ROCK.value()) {
                     background = factory.getBiome(Biome.LIGHT_ROCK);
-                    overlay = factory.getRandomObstacle(Biome.LIGHT_ROCK, o);
+                    overlay = random(rand, factory, Biome.LIGHT_ROCK, o);
                 } else if (b > Biome.SAND.value()) {
                     background = factory.getBiome(Biome.SAND);
-                    overlay = factory.getRandomObstacle(Biome.SAND, o);
+                    overlay = random(rand, factory, Biome.SAND, o);
                 } else {
                     background = factory.getBiome(Biome.GRASS);
                     overlay = null;
@@ -54,5 +58,12 @@ public final class MapFactory {
         }
 
         return new MapImpl(tiles);
+    }
+
+    private static Asset random(Random rand, AssetFactory factory, Biome biome, double v) {
+        if (rand.nextInt(100) < 10) {
+            return factory.getRandomObstacle(biome, v);
+        }
+        return null;
     }
 }

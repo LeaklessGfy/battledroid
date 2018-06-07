@@ -66,6 +66,17 @@ public final class GameMain extends BasicGame {
         factory.registerBiome(Biome.ROCK, Paths.get("resources/tiles/rock.png"));
         factory.registerBiome(Biome.LIGHT_ROCK, Paths.get("resources/tiles/light_rock.png"));
         factory.registerBiome(Biome.SAND, Paths.get("resources/tiles/sand.png"));
+
+        factory.registerObstacle(Biome.SNOW, Paths.get("resources/overlays/snow_mountain.png"));
+        factory.registerObstacle(Biome.GRASS, Paths.get("resources/overlays/building.png"));
+        factory.registerObstacle(Biome.GRASS, Paths.get("resources/overlays/airport.png"));
+        factory.registerObstacle(Biome.GRASS, Paths.get("resources/overlays/tower.png"));
+        factory.registerObstacle(Biome.DARK_GRASS, Paths.get("resources/overlays/satellite.png"));
+        factory.registerObstacle(Biome.ROCK, Paths.get("resources/overlays/rock_mountain.png"));
+        factory.registerObstacle(Biome.ROCK, Paths.get("resources/overlays/rock.png"));
+        factory.registerObstacle(Biome.LIGHT_ROCK, Paths.get("resources/overlays/pyramid.png"));
+        factory.registerObstacle(Biome.SAND, Paths.get("resources/overlays/sand_mountain.png"));
+
         factory.registerPlayer(Droid.class, Paths.get("resources/players/droid.png"));
 
         Map map = MapFactory.createRandom(factory);

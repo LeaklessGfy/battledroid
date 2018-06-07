@@ -51,7 +51,7 @@ public final class Tile {
     }
 
     public boolean isBusy() {
-        return overlay != null && overlay.isObstacle();
+        return overlay != null;
     }
 
     public void setBackground(Asset background) {

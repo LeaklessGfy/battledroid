@@ -5,33 +5,34 @@ import fr.battledroid.core.adaptee.AssetFactory;
 import fr.battledroid.core.adaptee.SpriteFactory;
 import fr.battledroid.core.map.Biome;
 import fr.battledroid.core.player.Player;
+import fr.battledroid.core.utils.Utils;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class DefaultAssetFactory implements AssetFactory {
     private final HashMap<Biome, Path> backgrounds;
-    private final HashMap<Biome, Path> overlays;
+    private final HashMap<Biome, List<Path>> overlays;
     private final HashMap<Class<? extends Player>, Path> players;
     private final SpriteFactory spriteFactory;
-
+    private final Random rand;
 
     private DefaultAssetFactory(
             HashMap<Biome, Path> backgrounds,
-            HashMap<Biome, Path> overlays,
+            HashMap<Biome, List<Path>> overlays,
             HashMap<Class<? extends Player>, Path> players,
             SpriteFactory spriteFactory
     ) {
-        this.backgrounds = Objects.requireNonNull(backgrounds);
-        this.overlays = Objects.requireNonNull(overlays);
-        this.players = Objects.requireNonNull(players);
-        this.spriteFactory = Objects.requireNonNull(spriteFactory);
+        this.backgrounds = Utils.requireNonNull(backgrounds);
+        this.overlays = Utils.requireNonNull(overlays);
+        this.players = Utils.requireNonNull(players);
+        this.spriteFactory = Utils.requireNonNull(spriteFactory);
+        this.rand = new Random();
     }
 
     public static AssetFactory create(SpriteFactory spriteFactory) {
         HashMap<Biome, Path> backgrounds = new HashMap<>();
-        HashMap<Biome, Path> overlays = new HashMap<>();
+        HashMap<Biome, List<Path>> overlays = new HashMap<>();
         HashMap<Class<? extends Player>, Path> players = new HashMap<>();
 
         return new DefaultAssetFactory(backgrounds, overlays, players, spriteFactory);
@@ -39,12 +40,13 @@ public class DefaultAssetFactory implements AssetFactory {
 
     @Override
     public void registerBiome(Biome biome, Path path) {
-        backgrounds.put(Objects.requireNonNull(biome), Objects.requireNonNull(path));
+        backgrounds.put(Utils.requireNonNull(biome), Utils.requireNonNull(path));
     }
 
     @Override
     public void registerObstacle(Biome biome, Path path) {
-        overlays.put(Objects.requireNonNull(biome), Objects.requireNonNull(path));
+        Utils.requireNonNull(biome);
+        overlays.computeIfAbsent(biome, k -> new ArrayList<>()).add(Objects.requireNonNull(path));
     }
 
     @Override
@@ -59,7 +61,7 @@ public class DefaultAssetFactory implements AssetFactory {
 
     @Override
     public Asset getRandomObstacle(Biome biome, double d) {
-        return null;
+        return findOverlay(biome);
     }
 
     @Override
@@ -76,11 +78,12 @@ public class DefaultAssetFactory implements AssetFactory {
     }
 
     private Asset findOverlay(Biome biome) {
-        Path path = overlays.get(biome);
-        if (path == null) {
+        List<Path> paths = overlays.get(biome);
+        if (paths == null) {
             throw new IllegalStateException("Unknown overlay for biome " + biome);
         }
-        return find(path);
+        int i = rand.nextInt(paths.size());
+        return find(paths.get(i % paths.size()));
     }
 
     private Asset findPlayer(Class<? extends Player> clazz) {

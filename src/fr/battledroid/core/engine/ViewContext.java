@@ -56,7 +56,7 @@ public final class ViewContext {
         engine.move(player, Direction.toPoint(direction), new Consumer<Tile>() {
             @Override
             public void accept(Tile val) {
-                //smoothCenterOn(val);
+                smoothCenterOn(val);
             }
         });
     }
