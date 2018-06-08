@@ -14,6 +14,7 @@ import fr.battledroid.core.engine.ViewContext;
 import fr.battledroid.core.map.Biome;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.map.MapFactory;
+import fr.battledroid.core.particle.Laser;
 import fr.battledroid.core.player.*;
 import fr.battledroid.core.player.item.Item;
 import fr.slick.adapter.CanvasAdapter;
@@ -83,6 +84,8 @@ public final class GameMain extends BasicGame {
         factory.registerArtifact(BombMalus.class, Paths.get("resources/artifacts/bomb_malus.png"));
         factory.registerArtifact(SpeedBonus.class, Paths.get("resources/artifacts/speed_bonus.png"));
         factory.registerArtifact(HealthBonus.class, Paths.get("resources/artifacts/health_bonus.png"));
+
+        factory.registerParticle(Laser.class, Paths.get("resources/particles/laser_down_eye.png"));
 
         Map map = MapFactory.createRandom(factory);
         Player player = PlayerFactory.createDroid(factory);

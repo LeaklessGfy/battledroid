@@ -2,6 +2,7 @@ package fr.battledroid.core.adaptee;
 
 import fr.battledroid.core.artifact.Artifact;
 import fr.battledroid.core.map.Biome;
+import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.utils.Utils;
 
@@ -16,6 +17,7 @@ public class AssetFactory {
     private final HashMap<Biome, ArrayList<Path>> overlays = new HashMap<>();
     private final HashMap<Class<? extends Player>, Path> players = new HashMap<>();
     private final HashMap<Class<? extends Artifact>, Path> artifacts = new HashMap<>();
+    private final HashMap<Class<? extends Particle>, Path> particles = new HashMap<>();
     private final SpriteFactory spriteFactory;
 
     public AssetFactory(SpriteFactory spriteFactory) {
@@ -39,6 +41,10 @@ public class AssetFactory {
         artifacts.put(Utils.requireNonNull(clazz), Utils.requireNonNull(path));
     }
 
+    public void registerParticle(Class<? extends Particle> clazz, Path path) {
+        particles.put(Utils.requireNonNull(clazz), Utils.requireNonNull(path));
+    }
+
     public Asset getBiome(Biome biome) {
         return findBackground(biome);
     }
@@ -53,6 +59,10 @@ public class AssetFactory {
 
     public Asset getArtifact(Class<? extends Artifact> clazz) {
         return findArtifact(clazz);
+    }
+
+    public Asset getParticle(Class<? extends Particle> clazz) {
+        return findParticle(clazz);
     }
 
     private Asset findBackground(Biome biome) {
@@ -84,6 +94,14 @@ public class AssetFactory {
         Path path = artifacts.get(clazz);
         if (path == null) {
             throw new IllegalStateException("Unknown artifact " + clazz);
+        }
+        return find(path);
+    }
+
+    private Asset findParticle(Class<? extends Particle> clazz) {
+        Path path = particles.get(clazz);
+        if (path == null) {
+            throw new IllegalStateException("Unknown particle " + clazz);
         }
         return find(path);
     }

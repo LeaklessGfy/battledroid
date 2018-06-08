@@ -1,10 +1,13 @@
 package fr.battledroid.core.particle;
 
+import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.utils.*;
 
 public final class Laser implements Particle {
+    private final Asset asset;
+
     private final PointF screen;
     private final PointF dir;
     private final Player owner;
@@ -14,7 +17,8 @@ public final class Laser implements Particle {
     private int range = 3;
     private int size = 30;
 
-    public Laser(Point iso, PointF screen, Point offset, Player owner) {
+    public Laser(Asset asset, Point iso, PointF screen, Point offset, Player owner) {
+        this.asset = asset;
         Utils.requireNonNull(iso);
         Utils.requireNonNull(offset);
         this.screen = Utils.requireNonNull(screen);
@@ -25,6 +29,7 @@ public final class Laser implements Particle {
     @Override
     public void draw(Canvas canvas, PointF offset) {
         canvas.drawCircle(screen.x + 130 + offset.x, screen.y + 200 + offset.y, size, null);
+        canvas.drawAsset(asset, screen.x + offset.x, screen.y + offset.y);
     }
 
     @Override
