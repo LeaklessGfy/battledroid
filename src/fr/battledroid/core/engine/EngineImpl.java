@@ -51,7 +51,12 @@ final class EngineImpl implements Engine {
         int size = s.mapSize * s.mapSize;
         int nbArtifact = size * 10 / 100;
         Random rand = new Random(s.seed);
+        Tile tile = map.tile(49, 24);
+        Artifact artifact = factory.createRandom();
+        artifact.current(tile);
+        artifacts.add(artifact);
 
+        /*
         for (int i = 0; i < nbArtifact; i++) {
             Artifact artifact = factory.createRandom();
             int x = rand.nextInt(s.mapSize) % s.mapSize;
@@ -62,6 +67,7 @@ final class EngineImpl implements Engine {
                 artifacts.add(artifact);
             }
         }
+        */
     }
 
     @Override

@@ -9,7 +9,7 @@ public final class Points {
     }
 
     public static int dist(Point src, Point dst) {
-        return (int) Math.sqrt(Math.pow(dst.x - src.x, 2) + Math.pow(dst.y - src.y, 2));
+        return (int) Math.abs(dst.x-src.x) + Math.abs(dst.y-src.y);
     }
 
     public static PointF isoToScreen(int x, int y) {

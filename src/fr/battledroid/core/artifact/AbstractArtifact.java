@@ -42,11 +42,10 @@ abstract class AbstractArtifact extends AssetWrapper implements Artifact {
     @Override
     public boolean hasCollide(Player player) {
         Tile pTile = player.current();
-
-        if (Points.dist(pTile.iso(), current.iso()) < field) {
+        int d = Points.dist(pTile.iso(), current.iso());
+        if (d <= field) {
             return true;
         }
-
         return false;
     }
 
