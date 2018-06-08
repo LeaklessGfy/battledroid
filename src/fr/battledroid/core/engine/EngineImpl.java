@@ -34,7 +34,7 @@ final class EngineImpl implements Engine {
         this.background = Utils.requireNonNull(background);
         this.players = new HashSet<>();
         this.artifacts = new HashSet<>();
-        this.spawner = new Spawn(2, map.size());
+        this.spawner = new Spawn(Settings.instance().nbPlayer, map.size());
     }
 
     @Override

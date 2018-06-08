@@ -14,10 +14,7 @@ import fr.battledroid.core.engine.ViewContext;
 import fr.battledroid.core.map.Biome;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.map.MapFactory;
-import fr.battledroid.core.player.Droid;
-import fr.battledroid.core.player.Player;
-import fr.battledroid.core.player.PlayerFactory;
-import fr.battledroid.core.player.PlayerObserver;
+import fr.battledroid.core.player.*;
 import fr.battledroid.core.player.item.Item;
 import fr.slick.adapter.CanvasAdapter;
 import fr.slick.adapter.ColorAdapter;
@@ -81,6 +78,7 @@ public final class GameMain extends BasicGame {
         factory.registerObstacle(Biome.SAND, Paths.get("resources/overlays/sand_mountain.png"));
 
         factory.registerPlayer(Droid.class, Paths.get("resources/players/droid.png"));
+        factory.registerPlayer(Monster.class, Paths.get("resources/players/monster.png"));
 
         factory.registerArtifact(BombMalus.class, Paths.get("resources/artifacts/bomb_malus.png"));
         factory.registerArtifact(SpeedBonus.class, Paths.get("resources/artifacts/speed_bonus.png"));
@@ -108,11 +106,13 @@ public final class GameMain extends BasicGame {
 
             }
         });
+        Player monster = PlayerFactory.createMonster(factory);
 
         ArtifactFactory artifactFactory = ArtifactFactory.create(factory);
 
         Engine engine = EngineFactory.create(map, new ColorAdapter(Color.black));
         engine.addPlayer(player);
+        engine.addPlayer(monster);
         engine.generateArtifact(artifactFactory);
 
         context = new ViewContext(engine, player);

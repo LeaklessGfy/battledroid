@@ -30,6 +30,8 @@ public final class Settings {
     /* TIMEOUT */
     private static final int DEFAULT_BEHAVIOUR_TIMEOUT = 2000;
 
+    private static final int DEFAULT_NB_PLAYER = 2;
+
     public final int tileWidth;
     public final int tileHeight;
     public final int tileAlphaWidth;
@@ -48,6 +50,8 @@ public final class Settings {
 
     public final int behaviourTimeout;
     public final int seed;
+
+    public final int nbPlayer;
 
     private Settings(Builder b) {
         this.tileWidth = Utils.requireMin(b.tileWidth, 64);
@@ -68,6 +72,8 @@ public final class Settings {
 
         this.behaviourTimeout = b.behaviourTimeout;
         this.seed = b.seed;
+
+        this.nbPlayer = b.nbPlayer;
     }
 
     public static Settings instance() {
@@ -97,6 +103,8 @@ public final class Settings {
         private int behaviourTimeout;
         private int seed;
 
+        private int nbPlayer;
+
         public Builder() {
             tileWidth = DEFAULT_TILE_WIDTH;
             tileHeight = DEFAULT_TILE_HEIGHT;
@@ -116,6 +124,8 @@ public final class Settings {
 
             behaviourTimeout = DEFAULT_BEHAVIOUR_TIMEOUT;
             seed = new Random(System.currentTimeMillis()).nextInt(Integer.MAX_VALUE);
+
+            nbPlayer = DEFAULT_NB_PLAYER;
         }
 
         public Settings build() {
@@ -193,6 +203,11 @@ public final class Settings {
 
         public Builder setSeed(int seed) {
             this.seed = seed;
+            return this;
+        }
+
+        public Builder setNbPlayer(int nbPlayer) {
+            this.nbPlayer = nbPlayer;
             return this;
         }
     }

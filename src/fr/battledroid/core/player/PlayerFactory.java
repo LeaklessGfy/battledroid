@@ -10,4 +10,10 @@ public final class PlayerFactory {
         ShieldItem shield = new ShieldItem();
         return Droid.create(assetFactory.getPlayer(Droid.class), weapon, shield);
     }
+
+    public static Monster createMonster(AssetFactory assetFactory) {
+        WeaponItem weapon = new WeaponItem();
+        ShieldItem shield = new ShieldItem();
+        return Monster.create(assetFactory.getPlayer(Monster.class), weapon, shield, false);
+    }
 }
