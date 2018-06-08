@@ -44,7 +44,7 @@ public final class Laser implements Particle {
     @Override
     public boolean hasCollide(Player dst) {
         if (dst.equals(owner)) {
-            //return false;
+            return false;
         }
         HitBox hitBox = dst.current().hitBox();
         HitBox mHitBox = new HitBox(screen.x, screen.y,  size, size);

@@ -188,13 +188,17 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     @Override
     public void current(Tile current) {
         synchronized (moves) {
-            this.current = current;
-            if (current != null) {
-                this.current.setOverlay(this);
-                this.last = last == null ? current : last;
-                this.screen = screen == null ? Points.isoToScreen(current.iso()) : screen;
-            }
+            this.current = Utils.requireNonNull(current);
+            this.current.setOverlay(this);
+            this.last = last == null ? current : last;
+            this.screen = screen == null ? Points.isoToScreen(current.iso()) : screen;
         }
+    }
+
+    @Override
+    public void resetCurrent() {
+        this.current.setOverlay(null);
+        this.current = null;
     }
 
     @Override

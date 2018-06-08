@@ -58,7 +58,7 @@ final class EngineImpl implements Engine {
             int y = rand.nextInt(s.mapSize) % s.mapSize;
             Tile tile = map.tile(x, y);
             if (!tile.isBusy()) {
-                tile.setOverlay(artifact);
+                artifact.current(tile);
                 artifacts.add(artifact);
             }
         }
@@ -84,7 +84,8 @@ final class EngineImpl implements Engine {
         for (Player player : players) {
             checkParticleCollide(player);
             checkArtifactCollide(player);
-            if (!checkPlayerAlive(player)) {
+            if (player.isDead()) {
+                player.resetCurrent();
                 dead.add(player);
             }
         }
@@ -137,15 +138,6 @@ final class EngineImpl implements Engine {
         this.behaviour = Utils.requireNonNull(behaviour);
     }
 
-    private boolean checkPlayerAlive(Player player) {
-        if (player.isDead()) {
-            player.current().setOverlay(null);
-            player.current(null);
-            return false;
-        }
-        return true;
-    }
-
     private void checkPlayerCollide(Player player) {
         for (Player enemy : players) {
             if (enemy.equals(player)) {
@@ -162,7 +154,10 @@ final class EngineImpl implements Engine {
                 collides.add(artifact);
             }
         }
-        artifacts.removeAll(collides);
+        for (Artifact artifact : collides) {
+            artifact.resetCurrent();
+            artifacts.remove(artifact);
+        }
     }
 
     private void checkParticleCollide(Player player) {
