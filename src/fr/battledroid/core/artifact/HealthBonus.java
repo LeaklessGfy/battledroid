@@ -9,7 +9,7 @@ public final class HealthBonus extends AbstractArtifact {
     }
 
     @Override
-    public void onPick(Player player) {
+    public void onCollide(Player player) {
         player.addHealth(10);
     }
 }

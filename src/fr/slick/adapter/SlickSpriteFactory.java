@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.WeakHashMap;
 
 public final class SlickSpriteFactory implements SpriteFactory {
-    private final WeakHashMap<Path, Image> lazy;
+    private final WeakHashMap<Path, Asset> lazy;
 
     public SlickSpriteFactory() {
         this.lazy = new WeakHashMap<>();
@@ -17,14 +17,13 @@ public final class SlickSpriteFactory implements SpriteFactory {
 
     @Override
     public Asset get(Path path) {
-        Image img = lazyLoad(path);
-        return AssetAdapter.create(img);
+        return lazyLoad(path);
     }
 
-    private Image lazyLoad(Path path) {
+    private Asset lazyLoad(Path path) {
         return lazy.computeIfAbsent(path, p -> {
             try {
-                return load(p);
+                return AssetAdapter.create(load(p));
             } catch (SlickException e) {
                 throw new RuntimeException(e);
             }

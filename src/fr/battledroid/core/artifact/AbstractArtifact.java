@@ -1,7 +1,7 @@
 package fr.battledroid.core.artifact;
 
 import fr.battledroid.core.adaptee.Asset;
-import fr.battledroid.core.adapter.AssetWrapper;
+import fr.battledroid.core.adaptee.AssetWrapper;
 import fr.battledroid.core.player.Player;
 
 abstract class AbstractArtifact extends AssetWrapper implements Artifact {
@@ -18,5 +18,10 @@ abstract class AbstractArtifact extends AssetWrapper implements Artifact {
     }
 
     @Override
-    public abstract void onPick(Player player);
+    public boolean hasCollide(Player player) {
+        return false;
+    }
+
+    @Override
+    public abstract void onCollide(Player player);
 }

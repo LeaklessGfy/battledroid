@@ -4,8 +4,6 @@ import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.adaptee.Canvas;
-import fr.battledroid.core.map.tile.Tile;
-import fr.battledroid.core.utils.HitBox;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.PointF;
 
@@ -13,7 +11,7 @@ import java.awt.*;
 import java.util.Objects;
 
 public final class AssetAdapter implements Asset {
-    private final java.awt.Image img;
+    private final Image img;
     private final int width;
     private final int height;
     private final int alphaWidth;
@@ -104,21 +102,6 @@ public final class AssetAdapter implements Asset {
 
     @Override
     public void tick() {}
-
-    @Override
-    public HitBox hitBox() {
-        return null;
-    }
-
-    @Override
-    public Tile getCurrent() {
-        return null;
-    }
-
-    @Override
-    public void setCurrent(Tile tile) {
-
-    }
 
     @Override
     public Object get() {

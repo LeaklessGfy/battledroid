@@ -21,7 +21,7 @@ public final class ViewContext {
     public ViewContext(Engine engine, Player player) {
         this.engine = Utils.requireNonNull(engine);
         this.player = Utils.requireNonNull(player);
-        this.offset.set(Points.center(player.getCurrent()));
+        this.offset.set(Points.center(player.current()));
     }
 
     public void tick() {

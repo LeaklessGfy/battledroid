@@ -11,22 +11,19 @@ import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.utils.Points;
 import fr.battledroid.core.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 final class MapImpl implements Map {
     private final Tile[][] tiles;
-    private final ArrayList<Particle> particles;
+    private final HashSet<Particle> particles;
     private final Settings settings;
     private final PathFinder pathFinder;
 
     MapImpl(Tile[][] tiles) {
         this.tiles = Utils.requireNonNull(tiles);
         this.settings = Settings.instance();
-        this.particles = new ArrayList<>();
+        this.particles = new HashSet<>();
         this.pathFinder = new AStarFinder(this, settings.mapSize / 2, true);
     }
 
@@ -63,8 +60,8 @@ final class MapImpl implements Map {
     }
 
     @Override
-    public List<Particle> particles() {
-        return Collections.unmodifiableList(particles);
+    public Collection<Particle> particles() {
+        return particles;
     }
 
     @Override

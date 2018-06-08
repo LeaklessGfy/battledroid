@@ -23,6 +23,7 @@ final class EngineImpl implements Engine {
     private final Map map;
     private final AssetColor background;
     private final HashSet<Player> players;
+    private final HashSet<Artifact> artifacts;
     private final Spawn spawner;
 
     private Listener listener;
@@ -32,6 +33,7 @@ final class EngineImpl implements Engine {
         this.map = Utils.requireNonNull(map);
         this.background = Utils.requireNonNull(background);
         this.players = new HashSet<>();
+        this.artifacts = new HashSet<>();
         this.spawner = new Spawn(2, map.size());
     }
 
@@ -40,7 +42,7 @@ final class EngineImpl implements Engine {
         players.add(player);
         Point p = spawner.spawn();
         Tile tile = map.tile(p);
-        tile.setOverlay(player);
+        player.current(tile);
     }
 
     @Override
@@ -57,6 +59,7 @@ final class EngineImpl implements Engine {
             Tile tile = map.tile(x, y);
             if (!tile.isBusy()) {
                 tile.setOverlay(artifact);
+                artifacts.add(artifact);
             }
         }
     }
@@ -77,9 +80,15 @@ final class EngineImpl implements Engine {
     @Override
     public void tick() {
         map.tick();
+        HashSet<Player> dead = new HashSet<>();
         for (Player player : players) {
             checkParticleCollide(player);
+            checkArtifactCollide(player);
+            if (!checkPlayerAlive(player)) {
+                dead.add(player);
+            }
         }
+        players.removeAll(dead);
     }
 
     @Override
@@ -102,7 +111,7 @@ final class EngineImpl implements Engine {
         if (tile.isBusy()) {
             return;
         }
-        Tile src = player.getCurrent();
+        Tile src = player.current();
         List<Tile> path = map.findPath(src.iso(), tile.iso());
         player.move(path);
     }
@@ -128,27 +137,42 @@ final class EngineImpl implements Engine {
         this.behaviour = Utils.requireNonNull(behaviour);
     }
 
+    private boolean checkPlayerAlive(Player player) {
+        if (player.isDead()) {
+            player.current().setOverlay(null);
+            player.current(null);
+            return false;
+        }
+        return true;
+    }
+
     private void checkPlayerCollide(Player player) {
-        players.forEach(enemy -> {
+        for (Player enemy : players) {
             if (enemy.equals(player)) {
                 return;
             }
-
-            if (enemy.hasCollide(player)) {}
-        });
-
+        }
     }
 
-    private void checkArtifactCollide() {
-
+    private void checkArtifactCollide(Player player) {
+        HashSet<Artifact> collides = new HashSet<>();
+        for (Artifact artifact : artifacts) {
+            if (!collides.contains(artifact) && artifact.hasCollide(player)) {
+                artifact.onCollide(player);
+                collides.add(artifact);
+            }
+        }
+        artifacts.removeAll(collides);
     }
 
     private void checkParticleCollide(Player player) {
-        List<Particle> particles = map.particles();
-        for (Particle particle : particles) {
-            if (particle.hasCollide(player)) {
+        HashSet<Particle> collides = new HashSet<>();
+        for (Particle particle : map.particles()) {
+            if (!collides.contains(particle) && particle.hasCollide(player)) {
                 particle.onCollide(player);
+                collides.add(particle);
             }
         }
+        map.particles().removeAll(collides);
     }
 }

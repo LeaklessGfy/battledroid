@@ -46,10 +46,8 @@ public final class Points {
         return new PointF(d.x - s.x, d.y - s.y);
     }
 
-    public static PointF step(PointF src, PointF dst, int speed) {
-        float x = src.x + (dst.x / speed);
-        float y = src.y + (dst.y / speed);
-        return new PointF(x, y);
+    public static PointF step(PointF dst, int speed) {
+        return new PointF(dst.x / speed, dst.y / speed);
     }
 
     public static PointF center(Tile tile) {

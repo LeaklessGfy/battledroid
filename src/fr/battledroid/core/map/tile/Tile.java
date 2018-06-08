@@ -2,10 +2,7 @@ package fr.battledroid.core.map.tile;
 
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.Canvas;
-import fr.battledroid.core.utils.Point;
-import fr.battledroid.core.utils.PointF;
-import fr.battledroid.core.utils.Points;
-import fr.battledroid.core.utils.Utils;
+import fr.battledroid.core.utils.*;
 
 public final class Tile {
     private final Point iso;
@@ -19,7 +16,6 @@ public final class Tile {
         this.screen = Points.isoToScreen(iso);
         this.background = Utils.requireNonNull(background);
         this.overlay = overlay;
-        insureValidity();
     }
 
     public void drawBackground(Canvas canvas, PointF offset) {
@@ -54,21 +50,19 @@ public final class Tile {
         return overlay != null;
     }
 
+    public HitBox hitBox() {
+        if (overlay == null) {
+            return new HitBox(screen.x, screen.y, background.getWidth(), background.getHeight());
+        }
+        return new HitBox(screen.x, screen.y, overlay.getWidth(), overlay.getHeight());
+    }
+
     public void setBackground(Asset background) {
         this.background = Utils.requireNonNull(background);
-        insureValidity();
     }
 
     public void setOverlay(Asset overlay) {
         this.overlay = overlay;
-        insureValidity();
-    }
-
-    private void insureValidity() {
-        background.setCurrent(this);
-        if (overlay != null) {
-            overlay.setCurrent(this);
-        }
     }
 
     @Override

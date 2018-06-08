@@ -1,8 +1,5 @@
-package fr.battledroid.core.adapter;
+package fr.battledroid.core.adaptee;
 
-import fr.battledroid.core.adaptee.Asset;
-import fr.battledroid.core.adaptee.AssetColor;
-import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.utils.HitBox;
 import fr.battledroid.core.utils.Point;
@@ -49,21 +46,6 @@ public class AssetWrapper implements Asset {
     @Override
     public void tick() {
         asset.tick();
-    }
-
-    @Override
-    public HitBox hitBox() {
-        return asset.hitBox();
-    }
-
-    @Override
-    public Tile getCurrent() {
-        return asset.getCurrent();
-    }
-
-    @Override
-    public void setCurrent(Tile tile) {
-        asset.setCurrent(tile);
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.UUID;
 import java.util.concurrent.LinkedBlockingDeque;
 
 import fr.battledroid.core.adaptee.Canvas;
-import fr.battledroid.core.adapter.AssetWrapper;
+import fr.battledroid.core.adaptee.AssetWrapper;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.player.item.Weapon;
@@ -24,7 +24,8 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     private final boolean cpu;
 
     private PointF screen;
-    private Move ctx;
+    private Move move;
+    private Tile current;
     private Tile last;
 
     private double health;
@@ -92,6 +93,13 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     public State state() {
         synchronized (inventory) {
             return state;
+        }
+    }
+
+    @Override
+    public Tile current() {
+        synchronized (moves) {
+            return current;
         }
     }
 
@@ -178,8 +186,20 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     }
 
     @Override
+    public void current(Tile current) {
+        synchronized (moves) {
+            this.current = current;
+            if (current != null) {
+                this.current.setOverlay(this);
+                this.last = last == null ? current : last;
+                this.screen = screen == null ? Points.isoToScreen(current.iso()) : screen;
+            }
+        }
+    }
+
+    @Override
     public Particle shoot(Point offset) {
-        return weapon.shoot(getCurrent().iso().clone(), screen.clone(), offset, this);
+        return weapon.shoot(current.iso().clone(), screen.clone(), offset, this);
     }
 
     @Override
@@ -230,22 +250,6 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     }
 
     @Override
-    public Tile getCurrent() {
-        synchronized (moves) {
-            return super.getCurrent();
-        }
-    }
-
-    @Override
-    public void setCurrent(Tile position) {
-        synchronized (moves) {
-            super.setCurrent(position);
-            this.last = last == null ? position : last;
-            this.screen = screen == null ? Points.isoToScreen(position.iso()) : screen;
-        }
-    }
-
-    @Override
     public boolean hasCollide(Player player) {
         return false;
     }
@@ -261,23 +265,23 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
             return;
         }
         state = State.MOVING;
-        Tile src = getCurrent();
+        Tile src = current;
         PointF dir = Points.movement(src.iso(), dst.iso());
-        ctx = new Move(dst, dir, speed);
+        move = new Move(dst, dir, speed);
         screen.set(Points.isoToScreen(src.iso()));
     }
 
     private void nextStep() {
-        if (ctx.i == ctx.max / 2) {
-            getCurrent().setOverlay(null);
-            ctx.dst.setOverlay(this);
-            ctx.i++;
-        } else if (ctx.i > ctx.max) {
+        if (move.i == move.max / 2) {
+            current.setOverlay(null);
+            current(move.dst);
+            move.i++;
+        } else if (move.i > move.max) {
             state = State.WAITING;
-            ctx = null;
+            move = null;
         } else {
-            screen.set(Points.step(screen, ctx.dir, ctx.max));
-            ctx.i++;
+            screen.offset(Points.step(move.dir, move.max));
+            move.i++;
         }
     }
 

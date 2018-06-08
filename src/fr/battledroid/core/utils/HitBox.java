@@ -13,6 +13,14 @@ public final class HitBox {
         this.height = height;
     }
 
+    public boolean intersect(HitBox hit) {
+        if (x < hit.x + hit.width && x + width > hit.x
+                && y < hit.y + hit.height && y + height > hit.y) {
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return "HitBox{" +

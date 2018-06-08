@@ -9,7 +9,7 @@ public final class SpeedBonus extends AbstractArtifact {
     }
 
     @Override
-    public void onPick(Player player) {
+    public void onCollide(Player player) {
         player.addSpeed(5);
     }
 }

@@ -20,6 +20,7 @@ public interface Player extends Asset, Collider<Player> {
     int maxDefense();
     Inventory inventory();
     State state();
+    Tile current();
     Tile last();
 
     void addHealth(double health);
@@ -31,6 +32,7 @@ public interface Player extends Asset, Collider<Player> {
     void takeDamage(int damage);
     void move(Tile tile);
     void move(List<Tile> path);
+    void current(Tile current);
     Particle shoot(Point offset);
 
     boolean isDead();

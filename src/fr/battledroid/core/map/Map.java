@@ -6,6 +6,7 @@ import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.utils.Point;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface Map extends MasterDrawable, Ticker {
@@ -15,7 +16,7 @@ public interface Map extends MasterDrawable, Ticker {
     Tile tile(int x, int y);
     Tile tile(Point point);
     Tile screenToTile(double x, double y);
-    List<Particle> particles();
+    Collection<Particle> particles();
 
     int cost(int x, int y, int xD, int yD);
     int dist(Point src, Point dst);
