@@ -4,6 +4,7 @@ import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.utils.*;
+import org.lwjgl.Sys;
 
 public final class Laser implements Particle {
     private final Asset asset;
@@ -49,7 +50,12 @@ public final class Laser implements Particle {
             return false;
         }
         HitBox hitBox = dst.current().hitBox();
-        HitBox mHitBox = new HitBox(screen.x, screen.y,  size, size);
+        HitBox mHitBox = new HitBox(screen.x, screen.y, 0, 0);
+
+        if (hitBox.intersect(mHitBox)) {
+            System.out.println(hitBox);
+            System.out.println(mHitBox);
+        }
         return hitBox.intersect(mHitBox);
     }
 

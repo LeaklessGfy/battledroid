@@ -7,7 +7,7 @@ import fr.battledroid.core.utils.PointF;
 
 public final class IsometricDaniloff implements TileMath {
     @Override
-    public PointF isoToScreen(Tile tile, Asset asset) {
+    public PointF isoToScreen(Point point, Asset asset) {
         if (asset == null) {
             return new PointF(0, 0);
         }
@@ -15,8 +15,8 @@ public final class IsometricDaniloff implements TileMath {
         int w = (asset.getWidth() / 2);
         int h = (int) (asset.getHeight() / 3.5f);
 
-        float dx = (tile.x - tile.y) * w;
-        float dy = (tile.x + tile.y) * h;
+        float dx = (point.x - point.y) * w;
+        float dy = (point.x + point.y) * h;
 
         return new PointF(dx, dy);
     }

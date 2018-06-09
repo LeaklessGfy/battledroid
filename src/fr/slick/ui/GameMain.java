@@ -71,6 +71,7 @@ public final class GameMain extends BasicGame {
         Player monster = PlayerFactory.createMonster(assetFactory);
 
         player.attach(new SysObserver());
+        monster.attach(new SysObserver());
 
         ArtifactFactory artifactFactory = ArtifactFactory.create(assetFactory);
 

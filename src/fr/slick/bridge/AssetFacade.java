@@ -74,7 +74,7 @@ public class AssetFacade {
         AssetInfo info = new AssetInfo(p("players/droid.png"), 10, -5);
         factory.registerPlayer(Droid.class, info);
 
-        info = new AssetInfo(p("players/monster.png"), 0, 0);
+        info = new AssetInfo(p("players/monster.png"), 10, 0);
         factory.registerPlayer(Monster.class, info);
     }
 
@@ -87,7 +87,7 @@ public class AssetFacade {
     }
 
     private static void initParticle(AssetFactory factory) {
-        AssetInfo info = new AssetInfo(p("particles/laser.png"), 0, 0);
+        AssetInfo info = new AssetInfo(p("particles/laser_mini.png"), 0, 0);
         factory.registerParticle(Laser.class, info);
     }
 

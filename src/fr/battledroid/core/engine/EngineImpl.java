@@ -125,8 +125,7 @@ final class EngineImpl implements Engine {
 
     @Override
     public void shoot(Player player, Direction direction) {
-        Particle particle = player.shoot(direction);
-        map.addParticle(particle);
+        map.addParticle(player.shoot(direction));
     }
 
     @Override

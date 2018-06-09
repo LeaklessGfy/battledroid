@@ -7,7 +7,6 @@ import fr.battledroid.core.particle.Laser;
 import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.utils.Point;
-import fr.battledroid.core.utils.PointF;
 
 public final class WeaponItem implements Item, Weapon {
     private int damage = 10;
@@ -25,17 +24,18 @@ public final class WeaponItem implements Item, Weapon {
     }
 
     @Override
-    public String toString() {
-        return "Weapon";
-    }
-
-    @Override
     public Particle shoot(Tile tile, Direction direction, Player owner) {
         Point src = tile.iso();
         Point off = Direction.toPoint(direction);
         off.x = off.x == 0 ? off.x : off.x * range;
         off.y = off.y == 0 ? off.y : off.y * range;
+        Point dst = src.clone().offset(off);
 
-        return new Laser(asset, tile.getScreenBackground(), new PointF(), owner);
+        return new Laser(asset, tile.getScreenBackground(), tile.moveTo(dst), owner);
+    }
+
+    @Override
+    public String toString() {
+        return "Weapon";
     }
 }

@@ -62,12 +62,12 @@ public final class Tile {
         if (overlay == null) {
             return new HitBox(screenBackground.x, screenBackground.y, background.getWidth(), background.getHeight());
         }
-        return new HitBox(screenOverlay.x, screenOverlay.y, overlay.getWidth(), overlay.getHeight());
+        return new HitBox(screenOverlay.x, screenOverlay.y, overlay.getWidth() / 2, overlay.getHeight() / 2);
     }
 
     public void setBackground(Asset background) {
         this.background = Utils.requireNonNull(background);
-        this.screenBackground.set(math.isoToScreen(this, background));
+        this.screenBackground.set(math.isoToScreen(iso, background));
     }
 
     public void setOverlay(Asset overlay) {
@@ -80,6 +80,13 @@ public final class Tile {
     public PointF moveTo(Tile dst) {
         PointF s = screenBackground;
         PointF d = dst.screenBackground;
+
+        return new PointF(d.x - s.x, d.y - s.y);
+    }
+
+    public PointF moveTo(Point point) {
+        PointF s = screenBackground;
+        PointF d = math.isoToScreen(point, background);
 
         return new PointF(d.x - s.x, d.y - s.y);
     }

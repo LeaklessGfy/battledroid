@@ -2,7 +2,6 @@ package fr.battledroid.core.utils;
 
 import fr.battledroid.core.Settings;
 import fr.battledroid.core.map.tile.Tile;
-import org.lwjgl.Sys;
 
 public final class Points {
     public static int dist(PointF src, PointF dst) {
