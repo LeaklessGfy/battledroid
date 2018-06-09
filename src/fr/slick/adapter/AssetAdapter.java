@@ -1,60 +1,44 @@
 package fr.slick.adapter;
 
-import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.AssetColor;
+import fr.battledroid.core.adaptee.AssetInfo;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.PointF;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 
+import java.nio.file.Path;
 import java.util.Objects;
 
 public final class AssetAdapter implements Asset {
     private final Image img;
-    private final int width;
-    private final int height;
-    private final int alphaWidth;
-    private final int alphaHeight;
+    private final PointF offset;
 
-    private AssetAdapter(Image img, int width, int height, int alphaWidth, int alphaHeight) {
-        this.img = img;
-        this.width = width;
-        this.height = height;
-        this.alphaWidth = alphaWidth;
-        this.alphaHeight = alphaHeight;
+    private AssetAdapter(Image img, PointF offset) {
+        this.img = Objects.requireNonNull(img);
+        this.offset = Objects.requireNonNull(offset);
     }
 
-    public static AssetAdapter create(Image img) {
-        Objects.requireNonNull(img);
-        Settings settings = Settings.instance();
-        Image scaled = img.getScaledCopy(settings.tileWidth, settings.tileHeight);
-        int width = settings.tileWidth;
-        int height = settings.tileHeight;
-        int alphaWidth = settings.tileAlphaWidth;
-        int alphaHeight = settings.tileAlphaHeight;
-
-        return new AssetAdapter(scaled, width, height, alphaWidth, alphaHeight);
+    public static AssetAdapter create(int scale, AssetInfo info) {
+        Image scaled = load(info.getPath(), scale);
+        return new AssetAdapter(scaled, new PointF(info.getOffsetX() * scale, info.getOffsetY() * scale));
     }
 
     @Override
     public int getWidth() {
-        return width;
+        return img.getWidth();
     }
 
     @Override
     public int getHeight() {
-        return height;
+        return img.getHeight();
     }
 
     @Override
-    public int getAlphaWidth() {
-        return alphaWidth;
-    }
-
-    @Override
-    public int getAlphaHeight() {
-        return alphaHeight;
+    public PointF getOffset() {
+        return offset;
     }
 
     @Override
@@ -109,5 +93,14 @@ public final class AssetAdapter implements Asset {
     @Override
     public Object get() {
         return img;
+    }
+
+    private static Image load(Path path, int scale) {
+        try {
+            Image img = new Image(path.toString());
+            return img.getScaledCopy(scale);
+        } catch (SlickException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

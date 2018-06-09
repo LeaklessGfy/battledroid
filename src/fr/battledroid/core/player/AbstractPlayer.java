@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import fr.battledroid.core.Direction;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.AssetWrapper;
 import fr.battledroid.core.map.tile.Tile;
@@ -191,7 +192,7 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
             this.current = Utils.requireNonNull(current);
             this.current.setOverlay(this);
             this.last = last == null ? current : last;
-            this.screen = screen == null ? Points.isoToScreen(current.iso()) : screen;
+            this.screen = screen == null ? current.getScreenOverlay() : screen;
         }
     }
 
@@ -202,8 +203,8 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     }
 
     @Override
-    public Particle shoot(Point offset) {
-        return weapon.shoot(current.iso().clone(), screen.clone(), offset, this);
+    public Particle shoot(Direction direction) {
+        return weapon.shoot(current, direction, this);
     }
 
     @Override
@@ -269,10 +270,9 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
             return;
         }
         state = State.MOVING;
-        Tile src = current;
-        PointF dir = Points.movement(src.iso(), dst.iso());
+        PointF dir = current.moveTo(dst);
         move = new Move(dst, dir, speed);
-        screen.set(Points.isoToScreen(src.iso()));
+        screen.set(current.getScreenOverlay());
     }
 
     private void nextStep() {

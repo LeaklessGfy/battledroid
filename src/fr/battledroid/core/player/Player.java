@@ -1,6 +1,7 @@
 package fr.battledroid.core.player;
 
 import fr.battledroid.core.Collider;
+import fr.battledroid.core.Direction;
 import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.map.tile.TileAware;
@@ -8,7 +9,6 @@ import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.player.item.Inventory;
 import fr.battledroid.core.player.item.Item;
 import fr.battledroid.core.player.item.Weapon;
-import fr.battledroid.core.utils.Point;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public interface Player extends Asset, Collider<Player>, TileAware {
     void takeDamage(int damage);
     void move(Tile tile);
     void move(List<Tile> path);
-    Particle shoot(Point offset);
+    Particle shoot(Direction direction);
 
     boolean isDead();
     boolean isCPU();

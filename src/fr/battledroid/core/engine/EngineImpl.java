@@ -1,5 +1,6 @@
 package fr.battledroid.core.engine;
 
+import fr.battledroid.core.Direction;
 import fr.battledroid.core.Settings;
 import fr.battledroid.core.artifact.Artifact;
 import fr.battledroid.core.artifact.ArtifactFactory;
@@ -123,8 +124,8 @@ final class EngineImpl implements Engine {
     }
 
     @Override
-    public void shoot(Player player, Point point) {
-        Particle particle = player.shoot(point);
+    public void shoot(Player player, Direction direction) {
+        Particle particle = player.shoot(direction);
         map.addParticle(particle);
     }
 

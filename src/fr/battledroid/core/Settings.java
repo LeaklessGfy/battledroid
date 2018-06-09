@@ -54,11 +54,11 @@ public final class Settings {
     public final int nbPlayer;
 
     private Settings(Builder b) {
-        this.tileWidth = Utils.requireMin(b.tileWidth, 64);
-        this.tileHeight = Utils.requireMin(b.tileHeight, 64);
+        this.tileWidth = Utils.requireMin(b.tileWidth, 0);
+        this.tileHeight = Utils.requireMin(b.tileHeight, 0);
         this.tileAlphaWidth = Utils.requireMinMax(b.tileAlphaWidth, -1, tileWidth);
         this.tileAlphaHeight = Utils.requireMinMax(b.tileAlphaHeight, -1, tileHeight);
-        this.mapSize = Utils.requireMin(b.mapSize, 4);
+        this.mapSize = Utils.requireMin(b.mapSize, 1);
 
         this.screenWidth = b.screenWidth;
         this.screenHeight = b.screenHeight;

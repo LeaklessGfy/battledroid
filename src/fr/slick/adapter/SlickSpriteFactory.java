@@ -1,36 +1,26 @@
 package fr.slick.adapter;
 
 import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.adaptee.AssetInfo;
 import fr.battledroid.core.adaptee.SpriteFactory;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.SlickException;
 
-import java.nio.file.Path;
 import java.util.WeakHashMap;
 
 public final class SlickSpriteFactory implements SpriteFactory {
-    private final WeakHashMap<Path, Asset> lazy;
+    private final WeakHashMap<AssetInfo, Asset> lazy;
+    private final int scale;
 
-    public SlickSpriteFactory() {
+    public SlickSpriteFactory(int scale) {
         this.lazy = new WeakHashMap<>();
+        this.scale = scale;
     }
 
     @Override
-    public Asset get(Path path) {
-        return lazyLoad(path);
+    public Asset get(AssetInfo info) {
+        return lazyLoad(info);
     }
 
-    private Asset lazyLoad(Path path) {
-        return lazy.computeIfAbsent(path, p -> {
-            try {
-                return AssetAdapter.create(load(p));
-            } catch (SlickException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    private Image load(Path path) throws SlickException {
-        return new Image(path.toString());
+    private Asset lazyLoad(AssetInfo info) {
+        return lazy.computeIfAbsent(info, i -> AssetAdapter.create(scale, i));
     }
 }

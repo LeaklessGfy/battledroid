@@ -5,11 +5,43 @@ import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.AssetFactory;
 import fr.battledroid.core.map.noise.NoiseGenerator;
 import fr.battledroid.core.map.tile.Tile;
+import fr.battledroid.core.map.tile.math.TileMath;
 
 import java.util.Random;
 
 public final class MapFactory {
-    public static Map createRandom(AssetFactory factory) {
+    public static Map createSimple(Asset background, TileMath math) {
+        Settings settings = Settings.instance();
+        int s = settings.mapSize;
+        Tile[][] tiles = new Tile[s][s];
+
+        for (int x = 0; x < s; x++) {
+            for (int y = 0; y < s; y++) {
+                tiles[x][y] = new Tile(x, y, math);
+                tiles[x][y].setBackground(background);
+            }
+        }
+
+        return new MapImpl(tiles);
+    }
+
+    public static Map createAdvanced(Asset background, Asset overlay, TileMath math) {
+        Settings settings = Settings.instance();
+        int s = settings.mapSize;
+        Tile[][] tiles = new Tile[s][s];
+
+        for (int x = 0; x < s; x++) {
+            for (int y = 0; y < s; y++) {
+                tiles[x][y] = new Tile(x, y, math);
+                tiles[x][y].setBackground(background);
+                tiles[x][y].setOverlay(overlay);
+            }
+        }
+
+        return new MapImpl(tiles);
+    }
+
+    public static Map createRandom(AssetFactory factory, TileMath math) {
         Settings settings = Settings.instance();
         int s = settings.mapSize;
         Tile[][] tiles = new Tile[s][s];
@@ -53,7 +85,9 @@ public final class MapFactory {
                     overlay = null;
                 }
 
-                tiles[x][y] = new Tile(x, y, background, overlay);
+                tiles[x][y] = new Tile(x, y, math);
+                tiles[x][y].setBackground(background);
+                tiles[x][y].setOverlay(overlay);
             }
         }
 
@@ -62,7 +96,7 @@ public final class MapFactory {
 
     private static Asset random(Random rand, AssetFactory factory, Biome biome, double v) {
         if (rand.nextInt(100) < 10) {
-            return factory.getRandomObstacle(biome, v);
+            return factory.getRandomObstacle(biome);
         }
         return null;
     }

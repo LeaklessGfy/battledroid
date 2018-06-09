@@ -21,7 +21,6 @@ public final class ViewContext {
     public ViewContext(Engine engine, Player player) {
         this.engine = Utils.requireNonNull(engine);
         this.player = Utils.requireNonNull(player);
-        this.offset.set(Points.center(player.current()));
     }
 
     public void tick() {
@@ -62,11 +61,15 @@ public final class ViewContext {
     }
 
     public void shoot(Direction direction) {
-        engine.shoot(player, Direction.toPoint(direction));
+        engine.shoot(player, direction);
     }
 
     public void draw(Canvas canvas) {
         engine.drawMap(canvas, offset);
+    }
+
+    public void center() {
+        this.offset.set(Points.center(player.current()));
     }
 
     private void smoothCenterOn(Tile tile) {

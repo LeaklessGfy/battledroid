@@ -5,48 +5,51 @@ import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.AssetFactory;
 import fr.battledroid.core.adaptee.SpriteFactory;
 import fr.battledroid.core.artifact.ArtifactFactory;
-import fr.battledroid.core.artifact.BombMalus;
-import fr.battledroid.core.artifact.HealthBonus;
-import fr.battledroid.core.artifact.SpeedBonus;
 import fr.battledroid.core.engine.Engine;
 import fr.battledroid.core.engine.EngineFactory;
 import fr.battledroid.core.engine.ViewContext;
-import fr.battledroid.core.map.Biome;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.map.MapFactory;
-import fr.battledroid.core.particle.Laser;
+import fr.battledroid.core.map.tile.math.IsometricDaniloff;
 import fr.battledroid.core.player.*;
-import fr.battledroid.core.player.item.Item;
 import fr.slick.adapter.CanvasAdapter;
 import fr.slick.adapter.ColorAdapter;
 import fr.slick.adapter.SlickSpriteFactory;
+import fr.slick.bridge.AssetFacade;
+import fr.slick.bridge.SysObserver;
 import org.newdawn.slick.*;
 
-import java.nio.file.Paths;
 import java.util.Objects;
 
 public final class GameMain extends BasicGame {
-    private final AssetFactory factory;
+    private final SpriteFactory spriteFactory;
+    private final AssetFactory assetFactory;
     private ViewContext context;
     private CanvasAdapter adapter;
 
-    private GameMain(AssetFactory factory) {
+    private GameMain(SpriteFactory spriteFactory, AssetFactory assetFactory) {
         super("Battledroid");
-        this.factory = Objects.requireNonNull(factory);
+        this.spriteFactory = Objects.requireNonNull(spriteFactory);
+        this.assetFactory = Objects.requireNonNull(assetFactory);
     }
 
     public static GameMain create() {
-        SpriteFactory spriteFactory = new SlickSpriteFactory();
+        SpriteFactory spriteFactory = new SlickSpriteFactory(4);
         AssetFactory assetFactory = new AssetFactory(spriteFactory);
 
-        return new GameMain(assetFactory);
+        return new GameMain(spriteFactory, assetFactory);
     }
 
     public static void main(String[] arguments) {
         try {
             Settings settings = new Settings.Builder()
-                    .setScreenWidth(1000)
-                    .setScreenHeight(700)
+                    .setTileWidth(56)
+                    .setTileHeight(74)
+                    .setTileAlphaWidth(0)
+                    .setTileAlphaHeight(0)
+                    .setMapSize(4)
+                    .setScreenWidth(1008)
+                    .setScreenHeight(740)
                     .build();
 
             AppGameContainer app = new AppGameContainer(GameMain.create());
@@ -61,65 +64,24 @@ public final class GameMain extends BasicGame {
 
     @Override
     public void init(GameContainer container) throws SlickException {
-        factory.registerBiome(Biome.SNOW, Paths.get("resources/tiles/snow.png"));
-        factory.registerBiome(Biome.GRASS, Paths.get("resources/tiles/grass.png"));
-        factory.registerBiome(Biome.DARK_GRASS, Paths.get("resources/tiles/dark_grass.png"));
-        factory.registerBiome(Biome.ROCK, Paths.get("resources/tiles/rock.png"));
-        factory.registerBiome(Biome.LIGHT_ROCK, Paths.get("resources/tiles/light_rock.png"));
-        factory.registerBiome(Biome.SAND, Paths.get("resources/tiles/sand.png"));
+        AssetFacade.initAsset(assetFactory);
+        Map map = MapFactory.createRandom(assetFactory, new IsometricDaniloff());
 
-        factory.registerObstacle(Biome.SNOW, Paths.get("resources/overlays/snow_mountain.png"));
-        factory.registerObstacle(Biome.GRASS, Paths.get("resources/overlays/building.png"));
-        factory.registerObstacle(Biome.GRASS, Paths.get("resources/overlays/airport.png"));
-        factory.registerObstacle(Biome.GRASS, Paths.get("resources/overlays/tower.png"));
-        factory.registerObstacle(Biome.DARK_GRASS, Paths.get("resources/overlays/satellite.png"));
-        factory.registerObstacle(Biome.ROCK, Paths.get("resources/overlays/rock_mountain.png"));
-        factory.registerObstacle(Biome.ROCK, Paths.get("resources/overlays/rock.png"));
-        factory.registerObstacle(Biome.LIGHT_ROCK, Paths.get("resources/overlays/pyramid.png"));
-        factory.registerObstacle(Biome.SAND, Paths.get("resources/overlays/sand_mountain.png"));
+        Player player = PlayerFactory.createDroid(assetFactory);
+        Player monster = PlayerFactory.createMonster(assetFactory);
 
-        factory.registerPlayer(Droid.class, Paths.get("resources/players/droid.png"));
-        factory.registerPlayer(Monster.class, Paths.get("resources/players/monster.png"));
+        player.attach(new SysObserver());
 
-        factory.registerArtifact(BombMalus.class, Paths.get("resources/artifacts/bomb_malus.png"));
-        factory.registerArtifact(SpeedBonus.class, Paths.get("resources/artifacts/speed_bonus.png"));
-        factory.registerArtifact(HealthBonus.class, Paths.get("resources/artifacts/health_bonus.png"));
-
-        factory.registerParticle(Laser.class, Paths.get("resources/particles/laser_down_eye.png"));
-
-        Map map = MapFactory.createRandom(factory);
-        Player player = PlayerFactory.createDroid(factory);
-        player.attach(new PlayerObserver() {
-            @Override
-            public void updateHealth(double health) {
-                System.out.println("New health " + health);
-            }
-
-            @Override
-            public void updateDefense(int defense) {
-            }
-
-            @Override
-            public void updateSpeed(int speed) {
-
-            }
-
-            @Override
-            public void updateItem(Item item, boolean isNewItem) {
-
-            }
-        });
-        Player monster = PlayerFactory.createMonster(factory);
-
-        ArtifactFactory artifactFactory = ArtifactFactory.create(factory);
+        ArtifactFactory artifactFactory = ArtifactFactory.create(assetFactory);
 
         Engine engine = EngineFactory.create(map, new ColorAdapter(Color.black));
         engine.addPlayer(player);
         engine.addPlayer(monster);
-        engine.generateArtifact(artifactFactory);
+        //engine.generateArtifact(artifactFactory);
 
         context = new ViewContext(engine, player);
         adapter = new CanvasAdapter(container.getWidth(), container.getHeight());
+        context.center();
 
         container.getInput().enableKeyRepeat();
     }

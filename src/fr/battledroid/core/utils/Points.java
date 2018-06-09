@@ -2,6 +2,7 @@ package fr.battledroid.core.utils;
 
 import fr.battledroid.core.Settings;
 import fr.battledroid.core.map.tile.Tile;
+import org.lwjgl.Sys;
 
 public final class Points {
     public static int dist(PointF src, PointF dst) {
@@ -9,23 +10,7 @@ public final class Points {
     }
 
     public static int dist(Point src, Point dst) {
-        return (int) Math.abs(dst.x-src.x) + Math.abs(dst.y-src.y);
-    }
-
-    public static PointF isoToScreen(int x, int y) {
-        Settings s = Settings.instance();
-
-        int w = (s.tileWidth / 2);
-        int h = ((s.tileHeight - s.tileAlphaHeight) / 4);
-
-        float dx = (x - y) * w - w;
-        float dy = (x + y) * h - s.tileAlphaHeight;
-
-        return new PointF(dx, dy);
-    }
-
-    public static PointF isoToScreen(Point point) {
-        return isoToScreen(point.x, point.y);
+        return Math.abs(dst.x-src.x) + Math.abs(dst.y-src.y);
     }
 
     public static Point screenToIso(double x, double y) {
@@ -40,12 +25,6 @@ public final class Points {
         return new Point((int) fx, (int) fy);
     }
 
-    public static PointF movement(Point src, Point dst) {
-        PointF s = Points.isoToScreen(src);
-        PointF d = Points.isoToScreen(dst);
-        return new PointF(d.x - s.x, d.y - s.y);
-    }
-
     public static PointF step(PointF dst, int speed) {
         return new PointF(dst.x / speed, dst.y / speed);
     }
@@ -53,7 +32,7 @@ public final class Points {
     public static PointF center(Tile tile) {
         Settings s = Settings.instance();
         PointF center = new PointF();
-        PointF current = isoToScreen(tile.iso());
+        PointF current = tile.getScreenBackground();
 
         center.x = (s.screenWidth / 2) - (current.x + s.tileWidth / 2);
         center.y = (s.screenHeight / 2) - (current.y + s.tileHeight / 2);

@@ -1,5 +1,6 @@
 package fr.battledroid.core.engine;
 
+import fr.battledroid.core.Direction;
 import fr.battledroid.core.artifact.ArtifactFactory;
 import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
@@ -28,7 +29,7 @@ public interface Engine {
     void move(Player player, Tile tile, Consumer<Tile> onArrive);
     Tile find(double x, double y);
 
-    void shoot(Player player, Point point);
+    void shoot(Player player, Direction direction);
 
     void setListener(Listener listener);
     void setBehaviour(AIMoveBehaviour behaviour);

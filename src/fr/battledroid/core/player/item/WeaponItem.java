@@ -1,6 +1,8 @@
 package fr.battledroid.core.player.item;
 
+import fr.battledroid.core.Direction;
 import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.particle.Laser;
 import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.player.Player;
@@ -9,6 +11,7 @@ import fr.battledroid.core.utils.PointF;
 
 public final class WeaponItem implements Item, Weapon {
     private int damage = 10;
+    private int range = 3;
 
     private Asset asset;
 
@@ -27,7 +30,12 @@ public final class WeaponItem implements Item, Weapon {
     }
 
     @Override
-    public Particle shoot(Point iso, PointF screen, Point offset, Player owner) {
-        return new Laser(asset, iso, screen, offset, owner);
+    public Particle shoot(Tile tile, Direction direction, Player owner) {
+        Point src = tile.iso();
+        Point off = Direction.toPoint(direction);
+        off.x = off.x == 0 ? off.x : off.x * range;
+        off.y = off.y == 0 ? off.y : off.y * range;
+
+        return new Laser(asset, tile.getScreenBackground(), new PointF(), owner);
     }
 }

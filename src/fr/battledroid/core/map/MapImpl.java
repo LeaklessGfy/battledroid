@@ -14,13 +14,13 @@ import fr.battledroid.core.utils.Utils;
 import java.util.*;
 import java.util.stream.Collectors;
 
-final class MapImpl implements Map {
+public final class MapImpl implements Map {
     private final Tile[][] tiles;
     private final HashSet<Particle> particles;
     private final Settings settings;
     private final PathFinder pathFinder;
 
-    MapImpl(Tile[][] tiles) {
+    public MapImpl(Tile[][] tiles) {
         this.tiles = Utils.requireNonNull(tiles);
         this.settings = Settings.instance();
         this.particles = new HashSet<>();

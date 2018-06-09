@@ -24,13 +24,8 @@ public class AssetWrapper implements Asset {
     }
 
     @Override
-    public int getAlphaWidth() {
-        return asset.getAlphaWidth();
-    }
-
-    @Override
-    public int getAlphaHeight() {
-        return asset.getAlphaHeight();
+    public PointF getOffset() {
+        return asset.getOffset();
     }
 
     @Override
