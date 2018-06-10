@@ -4,12 +4,14 @@ import fr.battledroid.core.Direction;
 import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.AssetFactory;
 import fr.battledroid.core.adaptee.SpriteFactory;
+import fr.battledroid.core.artifact.Artifact;
 import fr.battledroid.core.artifact.ArtifactFactory;
 import fr.battledroid.core.engine.Engine;
 import fr.battledroid.core.engine.EngineFactory;
 import fr.battledroid.core.engine.ViewContext;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.map.MapFactory;
+import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.map.tile.math.IsometricDaniloff;
 import fr.battledroid.core.player.*;
 import fr.slick.adapter.CanvasAdapter;
@@ -26,6 +28,8 @@ public final class GameMain extends BasicGame {
     private final AssetFactory assetFactory;
     private ViewContext context;
     private CanvasAdapter adapter;
+
+    private long lastMove;
 
     private GameMain(SpriteFactory spriteFactory, AssetFactory assetFactory) {
         super("Battledroid");
@@ -47,7 +51,7 @@ public final class GameMain extends BasicGame {
                     .setTileHeight(74)
                     .setTileAlphaWidth(0)
                     .setTileAlphaHeight(0)
-                    .setMapSize(4)
+                    .setMapSize(50)
                     .setScreenWidth(1008)
                     .setScreenHeight(740)
                     .build();
@@ -80,15 +84,60 @@ public final class GameMain extends BasicGame {
         engine.addPlayer(monster);
         //engine.generateArtifact(artifactFactory);
 
+        engine.setListener(new Engine.Listener() {
+            @Override
+            public void onMove(Player player, Tile dst) {
+
+            }
+
+            @Override
+            public void onShoot(Player player) {
+                try {
+                    new Music("res/music/laser.ogg").play();
+                } catch (SlickException e) {
+                }
+            }
+
+            @Override
+            public void onCollidePlayer(Player p1, Player p2) {
+
+            }
+
+            @Override
+            public void onCollideArtifact(Player player, Artifact artifact) {
+
+            }
+        });
+
         context = new ViewContext(engine, player);
         adapter = new CanvasAdapter(container.getWidth(), container.getHeight());
         context.center();
 
-        container.getInput().enableKeyRepeat();
+        //container.getInput().enableKeyRepeat();
     }
 
     @Override
     public void update(GameContainer container, int delta) throws SlickException {
+        Input in = container.getInput();
+        long t = System.currentTimeMillis();
+        if (t - lastMove > 400) {
+            if (in.isControllerLeft(0)) {
+                lastMove = t;
+                context.move(Direction.LEFT);
+            }
+            if (in.isControllerRight(0)) {
+                lastMove = t;
+                context.move(Direction.RIGHT);
+            }
+            if (in.isControllerUp(0)) {
+                lastMove = t;
+                context.move(Direction.UP);
+            }
+            if (in.isControllerDown(0)) {
+                lastMove = t;
+                context.move(Direction.DOWN);
+            }
+        }
         context.tick();
     }
 
@@ -123,6 +172,20 @@ public final class GameMain extends BasicGame {
                 break;
             case Input.KEY_DOWN:
                 context.shoot(Direction.DOWN);
+                break;
+        }
+    }
+
+    @Override
+    public void controllerButtonPressed(int controller, int button) {
+        switch (button) {
+            case 0:
+                context.shoot(Direction.DOWN);
+                break;
+            case 1:
+                break;
+            case 2:
+                context.shoot(Direction.LEFT);
                 break;
         }
     }

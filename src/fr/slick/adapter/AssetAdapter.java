@@ -22,7 +22,7 @@ public final class AssetAdapter implements Asset {
     }
 
     public static AssetAdapter create(int scale, AssetInfo info) {
-        Image scaled = load(info.getPath(), scale);
+        Image scaled = load(info, scale);
         return new AssetAdapter(scaled, new PointF(info.getOffsetX() * scale, info.getOffsetY() * scale));
     }
 
@@ -95,10 +95,13 @@ public final class AssetAdapter implements Asset {
         return img;
     }
 
-    private static Image load(Path path, int scale) {
+    private static Image load(AssetInfo info, int scale) {
         try {
-            Image img = new Image(path.toString());
-            return img.getScaledCopy(scale);
+            Image img = new Image(info.getPath().toString());
+            if (info.getWidth() == -1 && info.getHeight() == -1) {
+                return img.getScaledCopy(scale);
+            }
+            return img.getScaledCopy(info.getWidth() * scale, info.getHeight() * scale);
         } catch (SlickException e) {
             throw new RuntimeException(e);
         }

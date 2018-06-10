@@ -14,6 +14,7 @@ import fr.battledroid.core.player.Player;
 public interface Engine {
     interface Listener {
         void onMove(Player player, Tile dst);
+        void onShoot(Player player);
         void onCollidePlayer(Player p1, Player p2);
         void onCollideArtifact(Player player, Artifact artifact);
     }

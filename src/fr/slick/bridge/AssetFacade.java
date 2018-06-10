@@ -25,7 +25,7 @@ public class AssetFacade {
         AssetInfo info = new AssetInfo(p("tiles/snow.png"), 0, 0);
         factory.registerBiome(Biome.SNOW, info);
 
-        info = new AssetInfo(p("tiles/grass.png"), 0, 0);
+        info = new AssetInfo(p("tiles/grass_bug.png"), 56, 74, 0, 0);
         factory.registerBiome(Biome.GRASS, info);
 
         info = new AssetInfo(p("tiles/dark_grass.png"), 0, 0);

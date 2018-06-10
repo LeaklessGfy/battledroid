@@ -126,6 +126,9 @@ final class EngineImpl implements Engine {
     @Override
     public void shoot(Player player, Direction direction) {
         map.addParticle(player.shoot(direction));
+        if (listener != null) {
+            listener.onShoot(player);
+        }
     }
 
     @Override
