@@ -4,7 +4,6 @@ import fr.battledroid.core.adaptee.Asset;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.utils.*;
-import org.lwjgl.Sys;
 
 public final class Laser implements Particle {
     private final Asset asset;
@@ -15,7 +14,6 @@ public final class Laser implements Particle {
 
     private int i = 0;
     private int speed = 30;
-    private int size = 30;
 
     public Laser(Asset asset, PointF screen, PointF dir, Player owner) {
         this.asset = asset;
@@ -26,7 +24,6 @@ public final class Laser implements Particle {
 
     @Override
     public void draw(Canvas canvas, PointF offset) {
-        //canvas.drawCircle(screen.x + 130 + offset.x, screen.y + 200 + offset.y, size, null);
         canvas.drawAsset(asset, screen.x + offset.x, screen.y + offset.y);
     }
 
