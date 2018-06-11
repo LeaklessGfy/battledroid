@@ -71,17 +71,17 @@ public final class GameMain extends BasicGame {
         AssetFacade.initAsset(assetFactory);
         Map map = MapFactory.createRandom(assetFactory, new IsometricDaniloff());
 
-        Player player = PlayerFactory.createDroid(assetFactory);
+        Player human = PlayerFactory.createDroid(assetFactory);
         Player monster = PlayerFactory.createMonster(assetFactory, true);
 
-        player.attach(new SysObserver());
+        human.attach(new SysObserver());
         monster.attach(new SysObserver());
 
         ArtifactFactory artifactFactory = ArtifactFactory.create(assetFactory);
 
         Engine engine = EngineFactory.create(map, new ColorAdapter(Color.black));
-        engine.addPlayer(player);
-        engine.addPlayer(monster);
+        engine.addHuman(human);
+        engine.addMonster(monster);
         //engine.generateArtifact(artifactFactory);
 
         engine.setListener(new Engine.Listener() {
@@ -109,10 +109,9 @@ public final class GameMain extends BasicGame {
             }
         });
 
-        context = new ViewContext(engine, player);
+        context = new ViewContext(engine, human);
         adapter = new CanvasAdapter(container.getWidth(), container.getHeight());
         context.center();
-
         //container.getInput().enableKeyRepeat();
     }
 
@@ -121,19 +120,19 @@ public final class GameMain extends BasicGame {
         Input in = container.getInput();
         long t = System.currentTimeMillis();
         if (t - lastMove > 400) {
-            if (in.isControllerLeft(0)) {
+            if (in.isControllerLeft(0) || in.isKeyDown(Input.KEY_Q)) {
                 lastMove = t;
                 context.move(Direction.LEFT);
             }
-            if (in.isControllerRight(0)) {
+            if (in.isControllerRight(0) || in.isKeyDown(Input.KEY_D)) {
                 lastMove = t;
                 context.move(Direction.RIGHT);
             }
-            if (in.isControllerUp(0)) {
+            if (in.isControllerUp(0) || in.isKeyDown(Input.KEY_Z)) {
                 lastMove = t;
                 context.move(Direction.UP);
             }
-            if (in.isControllerDown(0)) {
+            if (in.isControllerDown(0) || in.isKeyDown(Input.KEY_S)) {
                 lastMove = t;
                 context.move(Direction.DOWN);
             }
@@ -149,18 +148,6 @@ public final class GameMain extends BasicGame {
     @Override
     public void keyPressed(int key, char c) {
         switch (key) {
-            case Input.KEY_Q:
-                context.move(Direction.LEFT);
-                break;
-            case Input.KEY_D:
-                context.move(Direction.RIGHT);
-                break;
-            case Input.KEY_Z:
-                context.move(Direction.UP);
-                break;
-            case Input.KEY_S:
-                context.move(Direction.DOWN);
-                break;
             case Input.KEY_LEFT:
                 context.shoot(Direction.LEFT);
                 break;

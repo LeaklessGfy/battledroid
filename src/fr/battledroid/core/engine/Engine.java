@@ -19,7 +19,8 @@ public interface Engine {
         void onCollideArtifact(Player player, Artifact artifact);
     }
 
-    void addPlayer(Player player);
+    void addHuman(Player player);
+    void addMonster(Player player);
     void generateArtifact(ArtifactFactory factory);
 
     void drawMap(Canvas canvas, PointF offset);

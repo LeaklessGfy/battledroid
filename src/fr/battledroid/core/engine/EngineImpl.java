@@ -23,7 +23,8 @@ import java.util.Random;
 final class EngineImpl implements Engine {
     private final Map map;
     private final AssetColor background;
-    private final HashSet<Player> players;
+    private final HashSet<Player> humans;
+    private final HashSet<Player> monsters;
     private final HashSet<Artifact> artifacts;
     private final Spawn spawner;
 
@@ -33,17 +34,26 @@ final class EngineImpl implements Engine {
     EngineImpl(Map map, AssetColor background) {
         this.map = Utils.requireNonNull(map);
         this.background = Utils.requireNonNull(background);
-        this.players = new HashSet<>();
+        this.humans = new HashSet<>();
+        this.monsters = new HashSet<>();
         this.artifacts = new HashSet<>();
         this.spawner = new Spawn(Settings.instance().nbPlayer, map.size());
     }
 
     @Override
-    public void addPlayer(Player player) {
-        players.add(player);
+    public void addHuman(Player player) {
         Point p = spawner.spawn();
         Tile tile = map.tile(p);
         player.current(tile);
+        humans.add(player);
+    }
+
+    @Override
+    public void addMonster(Player player) {
+        Point p = spawner.spawn();
+        Tile tile = map.tile(p);
+        player.current(tile);
+        monsters.add(player);
     }
 
     @Override
@@ -82,7 +92,7 @@ final class EngineImpl implements Engine {
     public void tick() {
         map.tick();
         HashSet<Player> dead = new HashSet<>();
-        for (Player player : players) {
+        for (Player player : monsters) {
             checkParticleCollide(player);
             checkArtifactCollide(player);
             if (player.isDead()) {
@@ -92,7 +102,17 @@ final class EngineImpl implements Engine {
                 player.behave(this, map);
             }
         }
-        players.removeAll(dead);
+        monsters.removeAll(dead);
+        dead = new HashSet<>();
+        for (Player player : humans) {
+            checkPlayerCollide(player);
+            checkArtifactCollide(player);
+            if (player.isDead()) {
+                player.resetCurrent();
+                dead.add(player);
+            }
+        }
+        humans.removeAll(dead);
     }
 
     @Override
@@ -144,11 +164,6 @@ final class EngineImpl implements Engine {
     }
 
     private void checkPlayerCollide(Player player) {
-        for (Player enemy : players) {
-            if (enemy.equals(player)) {
-                return;
-            }
-        }
     }
 
     private void checkArtifactCollide(Player player) {

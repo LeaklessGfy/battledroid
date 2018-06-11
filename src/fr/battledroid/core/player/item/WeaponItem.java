@@ -30,12 +30,13 @@ public final class WeaponItem implements Item, Weapon {
         Point off = Direction.toPoint(direction);
         off.x = off.x == 0 ? off.x : off.x * range;
         off.y = off.y == 0 ? off.y : off.y * range;
-        Point dst = src.clone().offset(off);
-        PointF dir = tile.moveTo(dst);
 
         if (direction == Direction.RIGHT) {
-            dir.offset(100, 0);
+            off.x++;
         }
+
+        Point dst = src.clone().offset(off);
+        PointF dir = tile.moveTo(dst);
 
         return new Laser(asset, tile.getScreenBackground(), dir, owner);
     }

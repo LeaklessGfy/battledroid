@@ -49,13 +49,10 @@ public final class Laser implements Particle {
         if (dst.equals(owner)) {
             return false;
         }
+
         HitBox hitBox = dst.current().hitBox();
         HitBox mHitBox = new HitBox(screen.x, screen.y, 0, 0);
 
-        if (hitBox.intersect(mHitBox)) {
-            System.out.println(hitBox);
-            System.out.println(mHitBox);
-        }
         return hitBox.intersect(mHitBox);
     }
 
