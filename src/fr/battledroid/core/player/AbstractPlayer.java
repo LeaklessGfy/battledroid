@@ -8,8 +8,12 @@ import java.util.concurrent.LinkedBlockingDeque;
 import fr.battledroid.core.Direction;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.AssetWrapper;
+import fr.battledroid.core.engine.Engine;
+import fr.battledroid.core.map.Map;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.particle.Particle;
+import fr.battledroid.core.player.behaviour.AIBehaviour;
+import fr.battledroid.core.player.behaviour.DefaultAIBehaviour;
 import fr.battledroid.core.player.item.Weapon;
 import fr.battledroid.core.utils.*;
 import fr.battledroid.core.player.item.Inventory;
@@ -23,6 +27,7 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     private final ArrayList<PlayerObserver> observers;
     private final LinkedBlockingDeque<Tile> moves;
     private final boolean cpu;
+    private final AIBehaviour behaviour;
 
     private PointF screen;
     private Move move;
@@ -37,6 +42,8 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     private int maxSpeed;
     private State state;
 
+    private long lastBehave;
+
     AbstractPlayer(Builder builder) {
         super(builder.img);
         this.uuid = UUID.randomUUID().toString();
@@ -46,6 +53,7 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
         this.observers = builder.observers;
         this.moves = new LinkedBlockingDeque<>();
         this.cpu = builder.cpu;
+        this.behaviour = new DefaultAIBehaviour();
         this.health = builder.health;
         this.maxHealth = builder.maxHealth;
         this.defense = builder.defense;
@@ -130,11 +138,6 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     }
 
     @Override
-    public boolean isCPU() {
-        return cpu;
-    }
-
-    @Override
     public void addSpeed(int speed) {
         this.speed = Math.max(maxSpeed, this.speed - speed);
         for (PlayerObserver o : observers) {
@@ -208,8 +211,23 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     }
 
     @Override
+    public void behave(Engine engine, Map map) {
+        long now = System.currentTimeMillis();
+
+        if (cpu && now - lastBehave > 1000) {
+            behaviour.behave(this, engine, map);
+            lastBehave = now;
+        }
+    }
+
+    @Override
     public boolean isDead() {
         return health <= 0;
+    }
+
+    @Override
+    public boolean isCPU() {
+        return cpu;
     }
 
     @Override

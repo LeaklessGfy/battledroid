@@ -2,6 +2,7 @@ package fr.slick.bridge;
 
 import fr.battledroid.core.adaptee.AssetFactory;
 import fr.battledroid.core.adaptee.AssetInfo;
+import fr.battledroid.core.artifact.BombMalus;
 import fr.battledroid.core.map.Biome;
 import fr.battledroid.core.particle.Laser;
 import fr.battledroid.core.player.Droid;
@@ -79,15 +80,17 @@ public class AssetFacade {
     }
 
     private static void initArtifact(AssetFactory factory) {
+        AssetInfo info = new AssetInfo(p("artifacts/bomb_malus.png"), 0, 0);
+        factory.registerArtifact(BombMalus.class, info);
+
         /*
-        factory.registerArtifact(BombMalus.class, Paths.get(RES + "artifacts/bomb_malus.png"));
         factory.registerArtifact(SpeedBonus.class, Paths.get(RES + "artifacts/speed_bonus.png"));
         factory.registerArtifact(HealthBonus.class, Paths.get(RES + "artifacts/health_bonus.png"));
         */
     }
 
     private static void initParticle(AssetFactory factory) {
-        AssetInfo info = new AssetInfo(p("particles/laser_mini.png"), 0, 0);
+        AssetInfo info = new AssetInfo(p("particles/laser_lr.png"), 0, 0);
         factory.registerParticle(Laser.class, info);
     }
 

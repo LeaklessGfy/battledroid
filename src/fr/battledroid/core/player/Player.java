@@ -3,6 +3,8 @@ package fr.battledroid.core.player;
 import fr.battledroid.core.Collider;
 import fr.battledroid.core.Direction;
 import fr.battledroid.core.adaptee.Asset;
+import fr.battledroid.core.engine.Engine;
+import fr.battledroid.core.map.Map;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.map.tile.TileAware;
 import fr.battledroid.core.particle.Particle;
@@ -33,6 +35,7 @@ public interface Player extends Asset, Collider<Player>, TileAware {
     void move(Tile tile);
     void move(List<Tile> path);
     Particle shoot(Direction direction);
+    void behave(Engine engine, Map map);
 
     boolean isDead();
     boolean isCPU();

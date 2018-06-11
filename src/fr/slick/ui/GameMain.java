@@ -72,7 +72,7 @@ public final class GameMain extends BasicGame {
         Map map = MapFactory.createRandom(assetFactory, new IsometricDaniloff());
 
         Player player = PlayerFactory.createDroid(assetFactory);
-        Player monster = PlayerFactory.createMonster(assetFactory);
+        Player monster = PlayerFactory.createMonster(assetFactory, true);
 
         player.attach(new SysObserver());
         monster.attach(new SysObserver());

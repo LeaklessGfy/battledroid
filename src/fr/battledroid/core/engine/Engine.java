@@ -8,7 +8,7 @@ import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.artifact.Artifact;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.utils.PointF;
-import fr.battledroid.core.player.behaviour.AIMoveBehaviour;
+import fr.battledroid.core.player.behaviour.AIBehaviour;
 import fr.battledroid.core.player.Player;
 
 public interface Engine {
@@ -33,5 +33,5 @@ public interface Engine {
     void shoot(Player player, Direction direction);
 
     void setListener(Listener listener);
-    void setBehaviour(AIMoveBehaviour behaviour);
+    void setBehaviour(AIBehaviour behaviour);
 }

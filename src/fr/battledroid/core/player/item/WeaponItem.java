@@ -7,6 +7,7 @@ import fr.battledroid.core.particle.Laser;
 import fr.battledroid.core.particle.Particle;
 import fr.battledroid.core.player.Player;
 import fr.battledroid.core.utils.Point;
+import fr.battledroid.core.utils.PointF;
 
 public final class WeaponItem implements Item, Weapon {
     private int damage = 10;
@@ -30,8 +31,13 @@ public final class WeaponItem implements Item, Weapon {
         off.x = off.x == 0 ? off.x : off.x * range;
         off.y = off.y == 0 ? off.y : off.y * range;
         Point dst = src.clone().offset(off);
+        PointF dir = tile.moveTo(dst);
 
-        return new Laser(asset, tile.getScreenBackground(), tile.moveTo(dst), owner);
+        if (direction == Direction.RIGHT) {
+            dir.offset(100, 0);
+        }
+
+        return new Laser(asset, tile.getScreenBackground(), dir, owner);
     }
 
     @Override

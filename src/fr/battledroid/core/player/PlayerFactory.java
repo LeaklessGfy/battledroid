@@ -12,9 +12,9 @@ public final class PlayerFactory {
         return Droid.create(assetFactory.getPlayer(Droid.class), weapon, shield);
     }
 
-    public static Monster createMonster(AssetFactory assetFactory) {
+    public static Monster createMonster(AssetFactory assetFactory, boolean cpu) {
         WeaponItem weapon = new WeaponItem(assetFactory.getParticle(Laser.class));
         ShieldItem shield = new ShieldItem();
-        return Monster.create(assetFactory.getPlayer(Monster.class), weapon, shield, false);
+        return Monster.create(assetFactory.getPlayer(Monster.class), weapon, shield, cpu);
     }
 }

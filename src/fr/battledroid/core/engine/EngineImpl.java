@@ -14,7 +14,7 @@ import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.player.Player;
-import fr.battledroid.core.player.behaviour.AIMoveBehaviour;
+import fr.battledroid.core.player.behaviour.AIBehaviour;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,7 +28,7 @@ final class EngineImpl implements Engine {
     private final Spawn spawner;
 
     private Listener listener;
-    private AIMoveBehaviour behaviour;
+    private AIBehaviour behaviour;
 
     EngineImpl(Map map, AssetColor background) {
         this.map = Utils.requireNonNull(map);
@@ -88,6 +88,8 @@ final class EngineImpl implements Engine {
             if (player.isDead()) {
                 player.resetCurrent();
                 dead.add(player);
+            } else {
+                player.behave(this, map);
             }
         }
         players.removeAll(dead);
@@ -137,7 +139,7 @@ final class EngineImpl implements Engine {
     }
 
     @Override
-    public void setBehaviour(AIMoveBehaviour behaviour) {
+    public void setBehaviour(AIBehaviour behaviour) {
         this.behaviour = Utils.requireNonNull(behaviour);
     }
 
