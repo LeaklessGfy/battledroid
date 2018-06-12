@@ -23,6 +23,10 @@ public final class AssetInfo {
         this(path, -1, -1, offsetX, offsetY);
     }
 
+    public AssetInfo(Path path) {
+        this(path, -1, -1, 0, 0);
+    }
+
     public Path getPath() {
         return path;
     }

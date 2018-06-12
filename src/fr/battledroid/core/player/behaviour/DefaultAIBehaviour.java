@@ -1,5 +1,6 @@
 package fr.battledroid.core.player.behaviour;
 
+import fr.battledroid.core.Direction;
 import fr.battledroid.core.engine.Engine;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.map.tile.Tile;
@@ -18,6 +19,15 @@ public class DefaultAIBehaviour implements AIBehaviour {
         if (Points.dist(src.iso(), dst.iso()) > 5) {
             List<Tile> path = map.findNearestPath(src.iso(), dst.iso());
             ai.move(path);
+        }
+
+        for (Player player : engine.enemies(ai)) {
+            int dist = Points.dist(src.iso(), player.current().iso());
+
+            if (dist < 4) {
+                Direction direction = Direction.fromPoints(src.iso(), player.current().iso());
+                engine.shoot(ai, direction);
+            }
         }
     }
 }

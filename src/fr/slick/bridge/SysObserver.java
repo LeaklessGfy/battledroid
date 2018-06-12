@@ -1,9 +1,18 @@
 package fr.slick.bridge;
 
+import fr.battledroid.core.player.Player;
 import fr.battledroid.core.player.PlayerObserver;
 import fr.battledroid.core.player.item.Item;
 
-public class SysObserver implements PlayerObserver {
+import java.util.Objects;
+
+public final class SysObserver implements PlayerObserver {
+    private final Player subject;
+
+    public SysObserver(Player subject) {
+        this.subject = Objects.requireNonNull(subject);
+    }
+
     @Override
     public void updateHealth(double health) {
         System.out.println("New health " + health);

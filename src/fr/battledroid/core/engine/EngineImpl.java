@@ -2,6 +2,7 @@ package fr.battledroid.core.engine;
 
 import fr.battledroid.core.Direction;
 import fr.battledroid.core.Settings;
+import fr.battledroid.core.Colors;
 import fr.battledroid.core.artifact.Artifact;
 import fr.battledroid.core.artifact.ArtifactFactory;
 import fr.battledroid.core.function.Consumer;
@@ -14,11 +15,8 @@ import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.player.Player;
-import fr.battledroid.core.player.behaviour.AIBehaviour;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 final class EngineImpl implements Engine {
     private final Map map;
@@ -29,11 +27,10 @@ final class EngineImpl implements Engine {
     private final Spawn spawner;
 
     private Listener listener;
-    private AIBehaviour behaviour;
 
-    EngineImpl(Map map, AssetColor background) {
+    EngineImpl(Map map) {
         this.map = Utils.requireNonNull(map);
-        this.background = Utils.requireNonNull(background);
+        this.background = Colors.instance().getBackground();
         this.humans = new HashSet<>();
         this.monsters = new HashSet<>();
         this.artifacts = new HashSet<>();
@@ -76,7 +73,7 @@ final class EngineImpl implements Engine {
     }
 
     @Override
-    public void drawMap(Canvas canvas, PointF offset) {
+    public void draw(Canvas canvas, PointF offset) {
         canvas.drawColor(background);
         map.draw(canvas, offset);
     }
@@ -105,7 +102,7 @@ final class EngineImpl implements Engine {
         monsters.removeAll(dead);
         dead = new HashSet<>();
         for (Player player : humans) {
-            checkPlayerCollide(player);
+            checkParticleCollide(player);
             checkArtifactCollide(player);
             if (player.isDead()) {
                 player.resetCurrent();
@@ -147,6 +144,9 @@ final class EngineImpl implements Engine {
 
     @Override
     public void shoot(Player player, Direction direction) {
+        if (direction == Direction.STAY) {
+            return;
+        }
         map.addParticle(player.shoot(direction));
         if (listener != null) {
             listener.onShoot(player);
@@ -159,8 +159,23 @@ final class EngineImpl implements Engine {
     }
 
     @Override
-    public void setBehaviour(AIBehaviour behaviour) {
-        this.behaviour = Utils.requireNonNull(behaviour);
+    public Set<Player> enemies(Player player) {
+        if (humans.contains(player)) {
+            return Collections.unmodifiableSet(monsters);
+        } else if (monsters.contains(player)) {
+            return Collections.unmodifiableSet(humans);
+        }
+        throw new IllegalStateException("Player not contained in engine");
+    }
+
+    @Override
+    public Set<Player> humans() {
+        return Collections.unmodifiableSet(humans);
+    }
+
+    @Override
+    public Set<Player> monsters() {
+        return Collections.unmodifiableSet(monsters);
     }
 
     private void checkPlayerCollide(Player player) {

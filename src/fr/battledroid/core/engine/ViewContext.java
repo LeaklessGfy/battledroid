@@ -1,6 +1,8 @@
 package fr.battledroid.core.engine;
 
 import fr.battledroid.core.Direction;
+import fr.battledroid.core.Settings;
+import fr.battledroid.core.Colors;
 import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.utils.Points;
@@ -65,11 +67,35 @@ public final class ViewContext {
     }
 
     public void draw(Canvas canvas) {
-        engine.drawMap(canvas, offset);
+        if (player.isDead()) {
+            drawDead(canvas);
+        } else {
+            engine.draw(canvas, offset);
+            drawUI(canvas);
+        }
     }
 
     public void center() {
         this.offset.set(Points.center(player.current()));
+    }
+
+    private void drawDead(Canvas canvas) {
+        Settings s = Settings.instance();
+        Colors c = Colors.instance();
+
+        canvas.drawColor(c.getBackground());
+        canvas.drawText("You lose", s.screenWidth / 2, s.screenHeight / 2, c.getHealth());
+    }
+
+    private void drawUI(Canvas canvas) {
+        Settings s = Settings.instance();
+        Colors c = Colors.instance();
+
+        canvas.drawRect(10, s.screenHeight - 35, player.maxDefense(), 10, c.getBackground());
+        canvas.drawRect(10, s.screenHeight - 35, player.defense(), 10, c.getDefense());
+
+        canvas.drawRect(10, s.screenHeight - 20, (float) player.maxHealth(), 10, c.getBackground());
+        canvas.drawRect(10, s.screenHeight - 20, (float) player.health(), 10, c.getHealth());
     }
 
     private void smoothCenterOn(Tile tile) {

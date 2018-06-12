@@ -11,7 +11,7 @@ import fr.battledroid.core.player.Monster;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class AssetFacade {
+public final class AssetFacade {
     private final static String R = "res/";
 
     public static void initAsset(AssetFactory factory) {
@@ -23,22 +23,22 @@ public class AssetFacade {
     }
 
     private static void initBiome(AssetFactory factory) {
-        AssetInfo info = new AssetInfo(p("tiles/snow.png"), 0, 0);
+        AssetInfo info = new AssetInfo(p("tiles/snow.png"));
         factory.registerBiome(Biome.SNOW, info);
 
         info = new AssetInfo(p("tiles/grass_bug.png"), 56, 74, 0, 0);
         factory.registerBiome(Biome.GRASS, info);
 
-        info = new AssetInfo(p("tiles/dark_grass.png"), 0, 0);
+        info = new AssetInfo(p("tiles/dark_grass.png"));
         factory.registerBiome(Biome.DARK_GRASS, info);
 
-        info = new AssetInfo(p("tiles/rock.png"), 0, 0);
+        info = new AssetInfo(p("tiles/rock.png"));
         factory.registerBiome(Biome.ROCK, info);
 
-        info = new AssetInfo(p("tiles/light_rock.png"), 0, 0);
+        info = new AssetInfo(p("tiles/light_rock.png"));
         factory.registerBiome(Biome.LIGHT_ROCK, info);
 
-        info = new AssetInfo(p("tiles/sand.png"), 0, 0);
+        info = new AssetInfo(p("tiles/sand.png"));
         factory.registerBiome(Biome.SAND, info);
     }
 
@@ -80,7 +80,7 @@ public class AssetFacade {
     }
 
     private static void initArtifact(AssetFactory factory) {
-        AssetInfo info = new AssetInfo(p("artifacts/bomb_malus.png"), 0, 0);
+        AssetInfo info = new AssetInfo(p("artifacts/bomb_malus.png"), 15, -5);
         factory.registerArtifact(BombMalus.class, info);
 
         /*
@@ -90,7 +90,7 @@ public class AssetFacade {
     }
 
     private static void initParticle(AssetFactory factory) {
-        AssetInfo info = new AssetInfo(p("particles/laser_lr.png"), 0, 0);
+        AssetInfo info = new AssetInfo(p("particles/laser_lr.png"));
         factory.registerParticle(Laser.class, info);
     }
 

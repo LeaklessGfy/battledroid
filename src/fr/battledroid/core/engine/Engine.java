@@ -1,17 +1,19 @@
 package fr.battledroid.core.engine;
 
 import fr.battledroid.core.Direction;
+import fr.battledroid.core.Ticker;
 import fr.battledroid.core.artifact.ArtifactFactory;
+import fr.battledroid.core.drawable.MasterDrawable;
 import fr.battledroid.core.function.Consumer;
 import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.artifact.Artifact;
 import fr.battledroid.core.adaptee.Canvas;
-import fr.battledroid.core.utils.PointF;
-import fr.battledroid.core.player.behaviour.AIBehaviour;
 import fr.battledroid.core.player.Player;
 
-public interface Engine {
+import java.util.Set;
+
+public interface Engine extends Ticker, MasterDrawable {
     interface Listener {
         void onMove(Player player, Tile dst);
         void onShoot(Player player);
@@ -23,9 +25,7 @@ public interface Engine {
     void addMonster(Player player);
     void generateArtifact(ArtifactFactory factory);
 
-    void drawMap(Canvas canvas, PointF offset);
     void drawMiniMap(Canvas canvas);
-    void tick();
 
     void move(Player player, Point point, Consumer<Tile> onArrive);
     void move(Player player, Tile tile, Consumer<Tile> onArrive);
@@ -34,5 +34,8 @@ public interface Engine {
     void shoot(Player player, Direction direction);
 
     void setListener(Listener listener);
-    void setBehaviour(AIBehaviour behaviour);
+
+    Set<Player> enemies(Player player);
+    Set<Player> humans();
+    Set<Player> monsters();
 }

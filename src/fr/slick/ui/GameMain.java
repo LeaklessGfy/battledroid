@@ -1,23 +1,23 @@
 package fr.slick.ui;
 
+import fr.battledroid.core.Colors;
 import fr.battledroid.core.Direction;
 import fr.battledroid.core.Settings;
 import fr.battledroid.core.adaptee.AssetFactory;
 import fr.battledroid.core.adaptee.SpriteFactory;
-import fr.battledroid.core.artifact.Artifact;
 import fr.battledroid.core.artifact.ArtifactFactory;
 import fr.battledroid.core.engine.Engine;
 import fr.battledroid.core.engine.EngineFactory;
 import fr.battledroid.core.engine.ViewContext;
 import fr.battledroid.core.map.Map;
 import fr.battledroid.core.map.MapFactory;
-import fr.battledroid.core.map.tile.Tile;
 import fr.battledroid.core.map.tile.math.IsometricDaniloff;
 import fr.battledroid.core.player.*;
 import fr.slick.adapter.CanvasAdapter;
 import fr.slick.adapter.ColorAdapter;
 import fr.slick.adapter.SlickSpriteFactory;
 import fr.slick.bridge.AssetFacade;
+import fr.slick.bridge.SysListener;
 import fr.slick.bridge.SysObserver;
 import org.newdawn.slick.*;
 
@@ -38,7 +38,7 @@ public final class GameMain extends BasicGame {
     }
 
     public static GameMain create() {
-        SpriteFactory spriteFactory = new SlickSpriteFactory(4);
+        SpriteFactory spriteFactory = new SlickSpriteFactory(2);
         AssetFactory assetFactory = new AssetFactory(spriteFactory);
 
         return new GameMain(spriteFactory, assetFactory);
@@ -55,6 +55,8 @@ public final class GameMain extends BasicGame {
                     .setScreenWidth(1008)
                     .setScreenHeight(740)
                     .build();
+
+            Colors colors = Colors.init(new ColorAdapter(Color.black), new ColorAdapter(Color.red), new ColorAdapter(Color.blue));
 
             AppGameContainer app = new AppGameContainer(GameMain.create());
             app.setDisplayMode(settings.screenWidth, settings.screenHeight, false);
@@ -73,41 +75,16 @@ public final class GameMain extends BasicGame {
 
         Player human = PlayerFactory.createDroid(assetFactory);
         Player monster = PlayerFactory.createMonster(assetFactory, true);
-
-        human.attach(new SysObserver());
-        monster.attach(new SysObserver());
+        human.attach(new SysObserver(human));
+        monster.attach(new SysObserver(monster));
 
         ArtifactFactory artifactFactory = ArtifactFactory.create(assetFactory);
 
-        Engine engine = EngineFactory.create(map, new ColorAdapter(Color.black));
+        Engine engine = EngineFactory.create(map);
         engine.addHuman(human);
         engine.addMonster(monster);
-        //engine.generateArtifact(artifactFactory);
-
-        engine.setListener(new Engine.Listener() {
-            @Override
-            public void onMove(Player player, Tile dst) {
-
-            }
-
-            @Override
-            public void onShoot(Player player) {
-                try {
-                    new Music("res/music/laser.ogg").play();
-                } catch (SlickException e) {
-                }
-            }
-
-            @Override
-            public void onCollidePlayer(Player p1, Player p2) {
-
-            }
-
-            @Override
-            public void onCollideArtifact(Player player, Artifact artifact) {
-
-            }
-        });
+        engine.generateArtifact(artifactFactory);
+        engine.setListener(new SysListener());
 
         context = new ViewContext(engine, human);
         adapter = new CanvasAdapter(container.getWidth(), container.getHeight());

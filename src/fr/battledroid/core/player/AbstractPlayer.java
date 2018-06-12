@@ -213,7 +213,6 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     @Override
     public void behave(Engine engine, Map map) {
         long now = System.currentTimeMillis();
-
         if (cpu && now - lastBehave > 1000) {
             behaviour.behave(this, engine, map);
             lastBehave = now;
@@ -247,7 +246,6 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     @Override
     public void attach(PlayerObserver observer) {
         observers.add(Utils.requireNonNull(observer));
-        observer.updateHealth(health);
     }
 
     @Override
@@ -284,7 +282,7 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
 
     private void nextMove() {
         Tile dst = moves.poll();
-        if (dst == null) {
+        if (dst == null || dst.isBusy()) {
             return;
         }
         state = State.MOVING;

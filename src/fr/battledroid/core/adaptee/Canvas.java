@@ -13,4 +13,6 @@ public interface Canvas<T> {
     void drawCircle(float x, float y, float radius, AssetColor color);
     void drawColor(AssetColor color);
     void drawAsset(Asset asset, float x, float y);
+    void drawAsset(Asset asset, AssetColor color, float x, float y);
+    void drawText(String text, float x, float y, AssetColor color);
 }
