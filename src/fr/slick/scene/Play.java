@@ -1,4 +1,4 @@
-package fr.slick.ui;
+package fr.slick.scene;
 
 import fr.battledroid.core.Colors;
 import fr.battledroid.core.Direction;
@@ -20,10 +20,12 @@ import fr.slick.bridge.AssetFacade;
 import fr.slick.bridge.SysListener;
 import fr.slick.bridge.SysObserver;
 import org.newdawn.slick.*;
+import org.newdawn.slick.state.BasicGameState;
+import org.newdawn.slick.state.StateBasedGame;
 
 import java.util.Objects;
 
-public final class GameMain extends BasicGame {
+public final class Play extends BasicGameState {
     private final SpriteFactory spriteFactory;
     private final AssetFactory assetFactory;
     private ViewContext context;
@@ -31,49 +33,41 @@ public final class GameMain extends BasicGame {
 
     private long lastMove;
 
-    private GameMain(SpriteFactory spriteFactory, AssetFactory assetFactory) {
-        super("Battledroid");
+    private Play(SpriteFactory spriteFactory, AssetFactory assetFactory) {
         this.spriteFactory = Objects.requireNonNull(spriteFactory);
         this.assetFactory = Objects.requireNonNull(assetFactory);
     }
 
-    public static GameMain create() {
+    public static Play create() {
         SpriteFactory spriteFactory = new SlickSpriteFactory(2);
         AssetFactory assetFactory = new AssetFactory(spriteFactory);
 
-        return new GameMain(spriteFactory, assetFactory);
-    }
-
-    public static void main(String[] arguments) {
-        try {
-            Settings settings = new Settings.Builder()
-                    .setTileWidth(56)
-                    .setTileHeight(74)
-                    .setTileAlphaWidth(0)
-                    .setTileAlphaHeight(0)
-                    .setMapSize(50)
-                    .setScreenWidth(1008)
-                    .setScreenHeight(740)
-                    .build();
-
-            Colors colors = Colors.instance();
-            colors.setRed(new ColorAdapter(Color.red));
-            colors.setGreen(new ColorAdapter(Color.green));
-            colors.setBlue(new ColorAdapter(Color.blue));
-            colors.setBlack(new ColorAdapter(Color.black));
-
-            AppGameContainer app = new AppGameContainer(GameMain.create());
-            app.setDisplayMode(settings.screenWidth, settings.screenHeight, false);
-            app.setShowFPS(false); // true for display the numbers of FPS
-            app.setVSync(true); // false for disable the FPS synchronize
-            app.start();
-        } catch (SlickException e) {
-            throw new RuntimeException(e);
-        }
+        return new Play(spriteFactory, assetFactory);
     }
 
     @Override
-    public void init(GameContainer container) throws SlickException {
+    public int getID() {
+        return 1;
+    }
+
+    @Override
+    public void init(GameContainer container, StateBasedGame stateBasedGame) throws SlickException {
+        Settings settings = new Settings.Builder()
+                .setTileWidth(56)
+                .setTileHeight(74)
+                .setTileAlphaWidth(0)
+                .setTileAlphaHeight(0)
+                .setMapSize(50)
+                .setScreenWidth(container.getWidth())
+                .setScreenHeight(container.getHeight())
+                .build();
+
+        Colors colors = Colors.instance();
+        colors.setRed(new ColorAdapter(Color.red));
+        colors.setGreen(new ColorAdapter(Color.green));
+        colors.setBlue(new ColorAdapter(Color.blue));
+        colors.setBlack(new ColorAdapter(Color.black));
+
         AssetFacade.initAsset(assetFactory);
         Map map = MapFactory.createRandom(assetFactory, new IsometricDaniloff());
 
@@ -93,11 +87,16 @@ public final class GameMain extends BasicGame {
         context = new ViewContext(engine, human);
         adapter = new CanvasAdapter(container.getWidth(), container.getHeight());
         context.center();
-        //container.getInput().enableKeyRepeat();
+        container.getInput().enableKeyRepeat();
     }
 
     @Override
-    public void update(GameContainer container, int delta) throws SlickException {
+    public void render(GameContainer gameContainer, StateBasedGame stateBasedGame, Graphics g) throws SlickException {
+        context.draw(adapter.wrap(g));
+    }
+
+    @Override
+    public void update(GameContainer container, StateBasedGame stateBasedGame, int i) throws SlickException {
         Input in = container.getInput();
         long t = System.currentTimeMillis();
         if (t - lastMove > 300) {
@@ -119,11 +118,6 @@ public final class GameMain extends BasicGame {
             }
         }
         context.tick();
-    }
-
-    @Override
-    public void render(GameContainer container, Graphics g) throws SlickException {
-        context.draw(adapter.wrap(g));
     }
 
     @Override

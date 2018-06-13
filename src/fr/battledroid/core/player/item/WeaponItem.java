@@ -12,8 +12,10 @@ import fr.battledroid.core.utils.PointF;
 public final class WeaponItem implements Item, Weapon {
     private int damage = 10;
     private int range = 3;
+    private int rate = 1000;
 
     private Asset asset;
+    private long lastShoot;
 
     public WeaponItem(Asset asset) {
         this.asset = asset;
@@ -26,6 +28,12 @@ public final class WeaponItem implements Item, Weapon {
 
     @Override
     public Particle shoot(Tile tile, Direction direction, Player owner) {
+        long now = System.currentTimeMillis();
+        if (now - lastShoot < rate) {
+            return null;
+        }
+        lastShoot = now;
+
         Point src = tile.iso();
         Point off = Direction.toPoint(direction);
         off.x = off.x == 0 ? off.x : off.x * range;

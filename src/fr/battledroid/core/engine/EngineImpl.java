@@ -147,7 +147,11 @@ final class EngineImpl implements Engine {
         if (direction == Direction.STAY) {
             return;
         }
-        map.addParticle(player.shoot(direction));
+        Particle particle = player.shoot(direction);
+        if (particle == null) {
+            return;
+        }
+        map.addParticle(particle);
         if (listener != null) {
             listener.onShoot(player);
         }
