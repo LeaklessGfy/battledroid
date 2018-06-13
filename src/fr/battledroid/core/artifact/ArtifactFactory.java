@@ -20,13 +20,13 @@ public final class ArtifactFactory {
                 return new BombMalus(assetFactory.getArtifact(BombMalus.class));
             }
         });
-        /*
         factory.suppliers.add(new Supplier<Artifact>() {
             @Override
             public Artifact supply() {
                 return new HealthBonus(assetFactory.getArtifact(HealthBonus.class));
             }
         });
+        /*
         factory.suppliers.add(new Supplier<Artifact>() {
             @Override
             public Artifact supply() {

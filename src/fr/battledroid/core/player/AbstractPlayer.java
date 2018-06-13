@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import fr.battledroid.core.Colors;
 import fr.battledroid.core.Direction;
+import fr.battledroid.core.adaptee.AssetColor;
 import fr.battledroid.core.adaptee.Canvas;
 import fr.battledroid.core.adaptee.AssetWrapper;
 import fr.battledroid.core.engine.Engine;
@@ -43,6 +45,11 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
     private State state;
 
     private long lastBehave;
+
+    private long lastColor;
+    private long lastBlink;
+    private boolean blink;
+    private AssetColor color;
 
     AbstractPlayer(Builder builder) {
         super(builder.img);
@@ -121,6 +128,11 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
 
     @Override
     public void addHealth(double health) {
+        color = Colors.instance().getGreen();
+        lastColor = System.currentTimeMillis();
+        blink = false;
+        lastBlink = 0;
+
         this.health = Math.max(0, this.health + health);
         this.health = Math.min(maxHealth, this.health);
         for (PlayerObserver o : observers) {
@@ -160,6 +172,11 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
 
     @Override
     public void takeDamage(int damage) {
+        color = Colors.instance().getRed();
+        lastColor = System.currentTimeMillis();
+        blink = false;
+        lastBlink = 0;
+
         defense = defense - damage;
         if (defense < 0) {
             health = Math.max(0, health + defense);
@@ -253,7 +270,27 @@ abstract class AbstractPlayer extends AssetWrapper implements Player {
         if (state == State.MOVING) {
             screen = this.screen;
         }
-        super.draw(canvas, screen, offset);
+
+        if (color == null) {
+            super.draw(canvas, screen, offset);
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        if (now - lastColor > 1000) {
+            color = null;
+            super.draw(canvas, screen, offset);
+            return;
+        }
+        if (blink) {
+            canvas.drawAsset(this, color, screen.x + offset.x, screen.y + offset.y);
+        } else {
+            super.draw(canvas, screen, offset);
+        }
+        if (now - lastBlink > 200) {
+            blink = !blink;
+            lastBlink = now;
+        }
     }
 
     @Override

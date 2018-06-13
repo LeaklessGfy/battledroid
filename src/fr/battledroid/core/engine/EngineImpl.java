@@ -30,7 +30,7 @@ final class EngineImpl implements Engine {
 
     EngineImpl(Map map) {
         this.map = Utils.requireNonNull(map);
-        this.background = Colors.instance().getBackground();
+        this.background = Colors.instance().getBlack();
         this.humans = new HashSet<>();
         this.monsters = new HashSet<>();
         this.artifacts = new HashSet<>();

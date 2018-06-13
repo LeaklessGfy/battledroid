@@ -1,7 +1,5 @@
 package fr.battledroid.core.adaptee;
 
-import fr.battledroid.core.map.tile.Tile;
-import fr.battledroid.core.utils.HitBox;
 import fr.battledroid.core.utils.Point;
 import fr.battledroid.core.utils.PointF;
 import fr.battledroid.core.utils.Utils;

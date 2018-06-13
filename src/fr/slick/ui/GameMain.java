@@ -56,7 +56,11 @@ public final class GameMain extends BasicGame {
                     .setScreenHeight(740)
                     .build();
 
-            Colors colors = Colors.init(new ColorAdapter(Color.black), new ColorAdapter(Color.red), new ColorAdapter(Color.blue));
+            Colors colors = Colors.instance();
+            colors.setRed(new ColorAdapter(Color.red));
+            colors.setGreen(new ColorAdapter(Color.green));
+            colors.setBlue(new ColorAdapter(Color.blue));
+            colors.setBlack(new ColorAdapter(Color.black));
 
             AppGameContainer app = new AppGameContainer(GameMain.create());
             app.setDisplayMode(settings.screenWidth, settings.screenHeight, false);
@@ -96,7 +100,7 @@ public final class GameMain extends BasicGame {
     public void update(GameContainer container, int delta) throws SlickException {
         Input in = container.getInput();
         long t = System.currentTimeMillis();
-        if (t - lastMove > 400) {
+        if (t - lastMove > 300) {
             if (in.isControllerLeft(0) || in.isKeyDown(Input.KEY_Q)) {
                 lastMove = t;
                 context.move(Direction.LEFT);
